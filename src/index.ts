@@ -1,17 +1,20 @@
-const express = require('express');
+// const express = require('express');
+import express, {Express, Request, Response, NextFunction} from 'express';
 
-const routerApi = require('./src/routers');
+// const routerApi = require('./routers');
+import routerApi from './routers';
 
-const { logError, errorHandler } = require('./src/middlewares/error.handler.js');
+// const { logError, errorHandler } = require('./middlewares/error.handler.js');
+import { logError, errorHandler } from './middlewares/error.handler';
 
-const app = express();
-const port = 3001;
+const app:Express = express();
+const port:number = 3001;
 
 app.use(express.json());
 
 //aca vamos a poner los cors
 
-app.use((req, res, next) => {
+app.use((req:Request, res:Response, next:NextFunction):void => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // update to match the domain you will make the request from
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', '*');
@@ -20,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 //aca mostrando la ruta principal
-app.get('/', (req, res) => {
+app.get('/', (req:Request, res:Response):void => {
     res.send("Esta funcionando correctamente!");
 })
 
@@ -34,6 +37,6 @@ app.use(errorHandler);
 
 
 //por ultimo el puerto por donde escucha
-app.listen(port, () => {
+app.listen(port, ():void => {
     console.log(`Utilizando el puerto ${port}`);
 })
