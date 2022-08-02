@@ -1,5 +1,4 @@
 import { Model, UUIDV4 } from "sequelize";
-import sequelize from "../../libs/sequelize";
 
 interface ProductsAttributes {
   id: number;
