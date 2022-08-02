@@ -2,6 +2,7 @@ import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
 
 //console.log(sequelize);
+//console.log(sequelize.models);
 const data = sequelize.models.User;
 
 export const getUsers = async (
