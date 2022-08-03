@@ -6,9 +6,9 @@ interface ProductsAttributes {
   description: string;
   price: number;
   stock: number;
+  enable: boolean;
   image: string;
   date: string;
-  category_id: number;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -21,9 +21,9 @@ export default (sequelize: any, DataTypes: any) => {
     description!: string;
     price!: number;
     stock!: number;
+    enable!: boolean;
     image!: string;
     date!: string;
-    category_id!: number;
     static associate(models: any) {}
   }
   Products.init(
@@ -49,16 +49,15 @@ export default (sequelize: any, DataTypes: any) => {
       stock: {
         type: DataTypes.INTEGER,
       },
+      enable: {
+        type: DataTypes.BOOLEAN,
+      },
       image: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       date: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      category_id: {
-        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
