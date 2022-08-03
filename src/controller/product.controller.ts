@@ -28,7 +28,7 @@ export const createProducts = async (
     //llega data del form
     const { name, description, price, stock, image } = req.body;
     //validamos si hay campos vacios
-    if (!name && !description) {
+    if (!name || !description) {
       return res.status(404).json({ error: "Faltan espacios por llenar" });
     }
     //creamos el producto

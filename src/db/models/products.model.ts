@@ -1,14 +1,14 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface ProductsAttributes {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
   stock: number;
   enable: boolean;
   image: string;
-  // date: string;
+  date: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -16,14 +16,14 @@ export default (sequelize: any, DataTypes: any) => {
     extends Model<ProductsAttributes>
     implements ProductsAttributes
   {
-    id!: number;
+    id!: string;
     name!: string;
     description!: string;
     price!: number;
     stock!: number;
     enable!: boolean;
     image!: string;
-    ////date!: string;
+    date!: string;
     static associate(models: any) {}
   }
   Products.init(
@@ -51,15 +51,18 @@ export default (sequelize: any, DataTypes: any) => {
       },
       enable: {
         type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
       },
       image: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // date: {
-      //   type: DataTypes.STRING,
-      //   allowNull: false,
-      // },
+      date: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+      },
     },
     {
       sequelize,
