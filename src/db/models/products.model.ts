@@ -1,12 +1,12 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface ProductsAttributes {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
   stock: number;
-  enable: boolean;
+  enable: true;
   image: string;
   date: string;
 }
@@ -16,12 +16,12 @@ export default (sequelize: any, DataTypes: any) => {
     extends Model<ProductsAttributes>
     implements ProductsAttributes
   {
-    id!: number;
+    id!: string;
     name!: string;
     description!: string;
     price!: number;
     stock!: number;
-    enable!: boolean;
+    enable!: true;
     image!: string;
     date!: string;
     static associate(models: any) {}
