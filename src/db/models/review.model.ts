@@ -1,7 +1,7 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface ReviewAttributes {
-  id: number;
+  id: string;
   title: string;
   description: string;
   date: string;
@@ -12,7 +12,7 @@ interface ReviewAttributes {
 
 export default (sequelize: any, DataTypes: any) => {
   class Review extends Model<ReviewAttributes> implements ReviewAttributes {
-    id!: number;
+    id!: string;
     title!: string;
     description!: string;
     date!: string;
@@ -40,6 +40,7 @@ export default (sequelize: any, DataTypes: any) => {
       date: {
         type: DataTypes.STRING,
         allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
       rating: {
         type: DataTypes.INTEGER,
