@@ -26,7 +26,7 @@ export default (sequelize: any, DataTypes: any) => {
     date!: string;
     //producto puede tener muchas caegoryas
     static associate(models: any) {
-      console.log(models, "ESTE ES EL CONSOLE");
+      console.log("PRODUCTS");
       Products.belongsToMany(models.Orders, {
         through: "product_orders",
       });
