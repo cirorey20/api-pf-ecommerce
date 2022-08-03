@@ -4,20 +4,30 @@ import Products from "./models/products.model";
 import Orders from "./models/order.model";
 import Review from "./models/review.model";
 import Users from "./models/users.model";
-import Adress from "./models/address.model";
+import Address from "./models/address.model";
 import Categories from "./models/categories.model";
+import Favorites from "./models/favorites.model";
+import ProductOrders from "./models/product_orders.model";
+
 //console.log(Sequelize);
 function setupModels(sequelize: Sequelize): void {
-
   const order = Orders(sequelize, DataTypes);
   const products = Products(sequelize, DataTypes);
+  const address = Address(sequelize, DataTypes);
+  const users = Users(sequelize, DataTypes);
+  const review = Review(sequelize, DataTypes);
+  const favorites = Favorites(sequelize, DataTypes);
+  const categories = Categories(sequelize, DataTypes);
+  const productOrders = ProductOrders(sequelize, DataTypes);
 
-  Users(sequelize, DataTypes);
-  Adress(sequelize, DataTypes);
-  Categories(sequelize, DataTypes);
-  Review(sequelize, DataTypes);
   products.associate(sequelize.models);
   order.associate(sequelize.models);
+  address.associate(sequelize.models);
+  users.associate(sequelize.models);
+  review.associate(sequelize.models);
+  favorites.associate(sequelize.models);
+  categories.associate(sequelize.models);
+  productOrders.associate(sequelize.models);
 }
 
 export default setupModels;

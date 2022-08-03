@@ -23,7 +23,11 @@ export default (sequelize: any, DataTypes: any) => {
     enable!: boolean;
     avatar!: string;
     date!: string;
-    static associate(models: any) {}
+    static associate(models: any) {
+      Users.hasMany(models.Orders);
+      Users.hasMany(models.Review);
+      Users.hasMany(models.Favorites);
+    }
   }
   Users.init(
     {
