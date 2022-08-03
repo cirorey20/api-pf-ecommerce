@@ -8,7 +8,7 @@ interface ProductsAttributes {
   stock: number;
   enable: boolean;
   image: string;
-  date: string;
+  // date: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -23,7 +23,7 @@ export default (sequelize: any, DataTypes: any) => {
     stock!: number;
     enable!: boolean;
     image!: string;
-    date!: string;
+    ////date!: string;
     static associate(models: any) {}
   }
   Products.init(
@@ -56,10 +56,10 @@ export default (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      date: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      // date: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
     },
     {
       sequelize,
