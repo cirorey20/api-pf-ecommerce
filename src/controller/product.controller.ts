@@ -4,7 +4,7 @@ import sequelize from "../config/sequelize";
 import { Model, UUIDV4 } from "sequelize";
 const data = sequelize.models.Products;
 
-console.log(sequelize.models);
+console.log(sequelize.models.Products);
 
 export const getProducts = async (
   req: Request,
@@ -26,15 +26,15 @@ export const createProducts = async (
 ): Promise<Response> => {
   try {
     //llega data del form
-    const { name, decription, price, stock, image } = req.body;
+    const { name, description, price, stock, image } = req.body;
     //validamos si hay campos vacios
-    if (!name && !decription) {
+    if (!name && !description) {
       return res.status(404).json({ error: "Faltan espacios por llenar" });
     }
     //creamos el producto
     const createProduct = await data.create({
       name,
-      decription,
+      description,
       price,
       stock,
       image,
@@ -66,15 +66,21 @@ export const createProducts = async (
 //   }
 // };
 
-
-export const getProductById = async (req: Request, res: Response): Promise<Response> => {
-  const idProduct = req.params.idProduct as unknown as number;
+export const getProductById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  //const idProduct = req.params.idProduct as unknown as number;
   try {
-      const product = await data.findByPk(idProduct,);
-      if (!product) return res.status(404).json({ status: 404, msg: 'Product not found' });
-      return res.status(200).json(product);
+    const { id } = req.params;
+    const product = await data.findByPk(id);
+    if (!product)
+      return res.status(404).json({ status: 404, msg: "Product not found" });
+    return res
+      .status(200)
+      .json({ usuario: product, msg: "este es tu usuario de user" });
   } catch (error) {
-      console.log(error);
-      return res.status(500).json("internal server error");
+    console.log(error);
+    return res.status(500).json("internal server error");
   }
 };
