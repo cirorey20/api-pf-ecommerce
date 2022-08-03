@@ -1,14 +1,14 @@
 
-import { Model, UUIDV4 } from 'sequelize';
+import { Model, UUIDV4, Sequelize } from 'sequelize';
 
 interface UsersAttributes {
-    id: number;
+    id: string;
     name: string;
     last_name: string;
     email: string;
     password: string;
     rol: string;
-    enable: true;
+    enable: boolean;
     avatar: string;
     date: string;
 }
@@ -16,13 +16,13 @@ interface UsersAttributes {
 module.exports = (sequelize: any, DataTypes: any) => {
     class Users extends Model<UsersAttributes>
     implements UsersAttributes {
-        id!: number;
+        id!: string;
         name!: string;
         last_name!: string;
         email!: string;
         password!: string;
         rol!: string;
-        enable!: true;
+        enable!: boolean;
         avatar!: string;
         date!: string;
         static associate(models: any) {
@@ -31,7 +31,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     };
     Users.init({
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             defaultValue: UUIDV4,
             allowNull: false,
             primaryKey: true
@@ -59,14 +59,16 @@ module.exports = (sequelize: any, DataTypes: any) => {
         enable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
+            defaultValue: true,
         },
         avatar: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         date: {
-            type: DataTypes.STRING,
+            type: DataTypes.DATE,
             allowNull: false,
+            defaultValue: DataTypes.NOW
         }
     }, {
         sequelize,
