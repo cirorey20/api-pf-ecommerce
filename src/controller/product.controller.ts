@@ -65,3 +65,16 @@ export const createProducts = async (
 //     return res.status(404).json({ error: "Error -->> deleteProducts" });
 //   }
 // };
+
+
+export const getProductById = async (req: Request, res: Response): Promise<Response> => {
+  const idProduct = req.params.idProduct as unknown as number;
+  try {
+      const product = await data.findByPk(idProduct,);
+      if (!product) return res.status(404).json({ status: 404, msg: 'Product not found' });
+      return res.status(200).json(product);
+  } catch (error) {
+      console.log(error);
+      return res.status(500).json("internal server error");
+  }
+};
