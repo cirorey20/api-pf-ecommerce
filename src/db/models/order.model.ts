@@ -17,7 +17,16 @@ export default (sequelize: any, DataTypes: any) => {
     state!: string;
     date!: string;
     time!: string;
-    static associate(models: any) {}
+
+
+    static associate(models: any) {
+      console.log("ORDERS");
+      //una order puede tener muchos productos
+      Orders.belongsToMany(models.Products, {
+        through: "product_orders",
+      });
+    }
+
   }
 
   Orders.init(
