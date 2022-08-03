@@ -14,8 +14,18 @@ export default (sequelize: any, DataTypes: any) => {
     id!: string;
     name!: string;
     image!: string;
-    static associate(models: any) {}
+
+    public associate(models: any) {
+      Categories.hasMany(models.Products, {
+        as: "product_category",
+      });
+    }
+
+    //   declare static associations: {
+    //   projects: Association<User, Project>;
+    // };
   }
+
   Categories.init(
     {
       id: {

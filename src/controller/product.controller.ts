@@ -76,9 +76,7 @@ export const getProductById = async (
     const product = await data.findByPk(id);
     if (!product)
       return res.status(404).json({ status: 404, msg: "Product not found" });
-    return res
-      .status(200)
-      .json({ usuario: product, msg: "este es tu usuario de user" });
+    return res.status(200).json({ usuario: product, msg: "Product", id });
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
