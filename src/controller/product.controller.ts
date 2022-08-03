@@ -78,3 +78,43 @@ export const getProductById = async (req: Request, res: Response): Promise<Respo
       return res.status(500).json("internal server error");
   }
 };
+
+
+export const updateProduct = async (req: Request, res: Response): Promise<Response> => {
+  const { id, name, description, price, stock, image, date, category_id } = req.body as {
+      id: number,
+      name: string,
+      description: string,
+      price: number,
+      stock: number,
+      image: string,
+      date:string,
+      category_id: number
+  };
+
+
+  try {
+
+      const fields: any = {};
+      if (name) fields.name = name;
+      if (description) fields.description = description;
+      if (price) fields.price = price;
+      if (stock) fields.stock = stock;
+      if (image) fields.image = image;
+      if (date) fields.date = date;
+      if (category_id) fields.category_id = category_id;
+
+      if (Object.keys(fields).length === 0 ||
+          !id) return res.status(400).json({ status: 400, msg: 'Bad request.Verify your data' });
+
+      await data.update(fields, {
+          where: {
+              id
+          }
+      });
+      return res.status(200).json({msg: `Update product id ${id}`});
+  } catch (error) {
+      console.log(error);
+      return res.status(500).json("internal server error");
+  }
+};
