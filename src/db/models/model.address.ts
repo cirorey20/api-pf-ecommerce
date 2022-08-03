@@ -2,24 +2,24 @@
 import { Model, UUIDV4} from 'sequelize';
 
 interface AddressAttributes {
-    id: number;
+    id: string;
     province: string;
     city: string;
     locality: string;
     street_number: string;
-    apartament_floor: string;
+    apartment_floor: string;
     zip_code: string;
 }
 
 module.exports =(sequelize: any, DataTypes: any) => {
     class Address extends Model<AddressAttributes>
     implements AddressAttributes {
-        id!: number;
+        id!: string;
         province!: string;
         city!: string;
         locality!: string;
         street_number!: string;
-        apartament_floor!: string;
+        apartment_floor!: string;
         zip_code!: string;
         static associate(models: any){
             
@@ -27,7 +27,7 @@ module.exports =(sequelize: any, DataTypes: any) => {
 };
 Address.init({
     id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.UUID,
         defaultValue: UUIDV4,
         allowNull: false,
         primaryKey: true,
@@ -49,7 +49,7 @@ Address.init({
         type: DataTypes.STRING,
         allowNull: false,
 },
-    apartament_floor: {
+    apartment_floor: {
         type: DataTypes.STRING,
         allowNull: false,
 },
