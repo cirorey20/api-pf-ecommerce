@@ -1,20 +1,10 @@
 // const express = require('express');
-import express, { Router, Request, Response, NextFunction } from 'express';
-import { Model } from 'sequelize';
+import express, { Router } from "express";
 const router: Router = express.Router();
 
-// const UserService = require('../../services/user.services');
-import UserService from '../../services/user.services';
+import { getUsers, createUser } from "../../controller/user.controller";
 
-const service:UserService = new UserService();
-
-router.get('/', async (req:Request, res:Response, next: NextFunction) => {
-    try {
-        const users:Model[] = await service.find();
-        res.status(200).json(users)
-    } catch (error) {
-        next(error)
-    }
-})
+router.get("/", getUsers);
+router.post("/create", createUser);
 
 export default router;
