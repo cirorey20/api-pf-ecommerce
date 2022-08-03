@@ -43,12 +43,11 @@ export default (sequelize: any, DataTypes: any) => {
         allowNull: false,
       },
       price: {
-        type: DataTypes.number,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       stock: {
-        type: DataTypes.number,
-        allowNull: false,
+        type: DataTypes.INTEGER,
       },
       image: {
         type: DataTypes.STRING,
@@ -59,7 +58,7 @@ export default (sequelize: any, DataTypes: any) => {
         allowNull: false,
       },
       category_id: {
-        type: DataTypes.number,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
