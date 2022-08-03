@@ -26,15 +26,15 @@ export const createProducts = async (
 ): Promise<Response> => {
   try {
     //llega data del form
-    const { name, decription, price, stock, image } = req.body;
+    const { name, description, price, stock, image } = req.body;
     //validamos si hay campos vacios
-    if (!name && !decription) {
+    if (!name || !description) {
       return res.status(404).json({ error: "Faltan espacios por llenar" });
     }
     //creamos el producto
     const createProduct = await data.create({
       name,
-      decription,
+      description,
       price,
       stock,
       image,
