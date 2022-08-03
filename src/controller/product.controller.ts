@@ -1,9 +1,10 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
-import { Product } from "../db/models/product.model";
+//import { Products } from "../db/models/products.model";
+import { Model, UUIDV4 } from "sequelize";
+const data = sequelize.models.Products;
 
-const data = sequelize.models.Product;
-//console.log(sequelize.models);
+console.log(sequelize.models);
 
 export const getProducts = async (
   req: Request,
@@ -48,19 +49,19 @@ export const createProducts = async (
   }
 };
 
-export const deleteProducts = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params as { id: string };
-    const user = await Product.findByPk(id);
-    if (user) {
-      await user.destroy();
-      res.json({ message: "User removed" });
-    } else {
-      res.status(404);
-      throw new Error("User not found");
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(404).json({ error: "Error -->> deleteProducts" });
-  }
-};
+// export const deleteProducts = async (req: Request, res: Response) => {
+//   try {
+//     const { id } = req.params as { id: string };
+//     const user = await Products.findByPk(id);
+//     if (user) {
+//       await user.destroy();
+//       res.json({ message: "User removed" });
+//     } else {
+//       res.status(404);
+//       throw new Error("User not found");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(404).json({ error: "Error -->> deleteProducts" });
+//   }
+// };
