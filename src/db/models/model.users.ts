@@ -8,6 +8,7 @@ interface UserAttributes {
     email: string;
     password: string;
     rol: string;
+    enable: true;
     avatar: string;
     date: string;
 }
@@ -21,15 +22,16 @@ module.exports = (sequelize: any, DataTypes: any) => {
         email!: string;
         password!: string;
         rol!: string;
+        enable!: true;
         avatar!: string;
         date!: string;
         static associate(models: any) {
-
+            
         }
     };
     User.init({
         id: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             defaultValue: UUIDV4,
             allowNull: false,
             primaryKey: true
@@ -52,6 +54,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         },
         rol: {
             type: DataTypes.STRING,
+            allowNull: false,
+        },
+        enable: {
+            type: DataTypes.BOOLEAN,
             allowNull: false,
         },
         avatar: {
