@@ -1,10 +1,6 @@
-import express, { Router, Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
-//import { Products } from "../db/models/products.model";
-
-const data = sequelize.models.Products;
-
-console.log(sequelize.models.Products);
+const { Products } = sequelize.models;
 
 export const getProducts = async (
   req: Request,
@@ -12,7 +8,7 @@ export const getProducts = async (
 ): Promise<Response> => {
   try {
     //devuelvo un arreglo
-    const allData = await data.findAll();
+    const allData = await Products.findAll();
     return res.status(202).json(allData);
   } catch (error) {
     console.log(error);
@@ -32,7 +28,7 @@ export const createProducts = async (
       return res.status(404).json({ error: "Faltan espacios por llenar" });
     }
     //creamos el producto
-    const createProduct = await data.create({
+    const createProduct = await Products.create({
       name,
       description,
       price,
@@ -73,7 +69,7 @@ export const getProductById = async (
   //const idProduct = req.params.idProduct as unknown as number;
   try {
     const { id } = req.params;
-    const product = await data.findByPk(id);
+    const product = await Products.findByPk(id);
     if (!product)
       return res.status(404).json({ status: 404, msg: "Product not found" });
     return res.status(200).json({ usuario: product, msg: "Product", id });
@@ -114,7 +110,7 @@ export const updateProduct = async (
         .status(400)
         .json({ status: 400, msg: "Bad request.Verify your data" });
 
-    await data.update(fields, {
+    await Products.update(fields, {
       where: {
         id,
       },
