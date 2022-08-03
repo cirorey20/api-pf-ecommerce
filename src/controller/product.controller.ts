@@ -1,7 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
 //import { Products } from "../db/models/products.model";
-import { Model, UUIDV4 } from "sequelize";
+
 const data = sequelize.models.Products;
 
 console.log(sequelize.models.Products);
