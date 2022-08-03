@@ -1,7 +1,7 @@
 
 import { Model, UUIDV4 } from 'sequelize';
 
-interface UserAttributes {
+interface UsersAttributes {
     id: number;
     name: string;
     last_name: string;
@@ -14,8 +14,8 @@ interface UserAttributes {
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-    class User extends Model<UserAttributes>
-    implements UserAttributes {
+    class Users extends Model<UsersAttributes>
+    implements UsersAttributes {
         id!: number;
         name!: string;
         last_name!: string;
@@ -29,7 +29,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
             
         }
     };
-    User.init({
+    Users.init({
         id: {
             type: DataTypes.INTEGER,
             defaultValue: UUIDV4,
@@ -70,7 +70,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
         }
     }, {
         sequelize,
-        modelName: 'User'
+        modelName: 'Users'
     });
-    return User
+    return Users
 }
