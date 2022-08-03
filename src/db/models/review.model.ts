@@ -1,28 +1,27 @@
 import { Model, UUIDV4 } from "sequelize";
 
-interface CommentsAttributes {
+interface ReviewAttributes {
   id: number;
   title: string;
   description: string;
   date: string;
+  rating: number;
   user_id: number;
   product_id: number;
 }
 
 export default (sequelize: any, DataTypes: any) => {
-  class Comments
-    extends Model<CommentsAttributes>
-    implements CommentsAttributes
-  {
+  class Review extends Model<ReviewAttributes> implements ReviewAttributes {
     id!: number;
     title!: string;
     description!: string;
     date!: string;
+    rating!: number;
     user_id!: number;
     product_id!: number;
     static associate(models: any) {}
   }
-  Comments.init(
+  Review.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -42,19 +41,22 @@ export default (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      rating: {
+        type: DataTypes.INTEGER,
+      },
       user_id: {
-        type: DataTypes.number,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       product_id: {
-        type: DataTypes.number,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "Comments",
+      modelName: "Review",
     }
   );
-  return Comments;
+  return Review;
 };
