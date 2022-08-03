@@ -1,7 +1,7 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface CategoriesAttributes {
-  id: number;
+  id: string;
   name: string;
   image: string;
 }
@@ -11,7 +11,7 @@ export default (sequelize: any, DataTypes: any) => {
     extends Model<CategoriesAttributes>
     implements CategoriesAttributes
   {
-    id!: number;
+    id!: string;
     name!: string;
     image!: string;
     static associate(models: any) {}

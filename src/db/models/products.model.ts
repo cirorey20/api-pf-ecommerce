@@ -1,7 +1,7 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface ProductsAttributes {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -16,7 +16,7 @@ export default (sequelize: any, DataTypes: any) => {
     extends Model<ProductsAttributes>
     implements ProductsAttributes
   {
-    id!: number;
+    id!: string;
     name!: string;
     description!: string;
     price!: number;
@@ -51,6 +51,8 @@ export default (sequelize: any, DataTypes: any) => {
       },
       enable: {
         type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
       },
       image: {
         type: DataTypes.STRING,
@@ -58,6 +60,7 @@ export default (sequelize: any, DataTypes: any) => {
       },
       date: {
         type: DataTypes.STRING,
+        defaultValue: DataTypes.NOW,
         allowNull: false,
       },
     },
