@@ -1,10 +1,10 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
 //import { Products } from "../db/models/products.model";
-import { Model, UUIDV4 } from "sequelize";
+
 const data = sequelize.models.Products;
 
-console.log(sequelize.models);
+console.log(sequelize.models.Products);
 
 export const getProducts = async (
   req: Request,
@@ -66,55 +66,62 @@ export const createProducts = async (
 //   }
 // };
 
-
-export const getProductById = async (req: Request, res: Response): Promise<Response> => {
-  const idProduct = req.params.idProduct as unknown as number;
+export const getProductById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  //const idProduct = req.params.idProduct as unknown as number;
   try {
-      const product = await data.findByPk(idProduct,);
-      if (!product) return res.status(404).json({ status: 404, msg: 'Product not found' });
-      return res.status(200).json(product);
+    const { id } = req.params;
+    const product = await data.findByPk(id);
+    if (!product)
+      return res.status(404).json({ status: 404, msg: "Product not found" });
+    return res.status(200).json({ usuario: product, msg: "Product", id });
   } catch (error) {
-      console.log(error);
-      return res.status(500).json("internal server error");
+    console.log(error);
+    return res.status(500).json("internal server error");
   }
 };
 
-
-export const updateProduct = async (req: Request, res: Response): Promise<Response> => {
-  const { id, name, description, price, stock, image, date, category_id } = req.body as {
-      id: number,
-      name: string,
-      description: string,
-      price: number,
-      stock: number,
-      image: string,
-      date:string,
-      category_id: number
-  };
-
+export const updateProduct = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id, name, description, price, stock, image, date, category_id } =
+    req.body as {
+      id: number;
+      name: string;
+      description: string;
+      price: number;
+      stock: number;
+      image: string;
+      date: string;
+      category_id: number;
+    };
 
   try {
+    const fields: any = {};
+    if (name) fields.name = name;
+    if (description) fields.description = description;
+    if (price) fields.price = price;
+    if (stock) fields.stock = stock;
+    if (image) fields.image = image;
+    if (date) fields.date = date;
+    if (category_id) fields.category_id = category_id;
 
-      const fields: any = {};
-      if (name) fields.name = name;
-      if (description) fields.description = description;
-      if (price) fields.price = price;
-      if (stock) fields.stock = stock;
-      if (image) fields.image = image;
-      if (date) fields.date = date;
-      if (category_id) fields.category_id = category_id;
+    if (Object.keys(fields).length === 0 || !id)
+      return res
+        .status(400)
+        .json({ status: 400, msg: "Bad request.Verify your data" });
 
-      if (Object.keys(fields).length === 0 ||
-          !id) return res.status(400).json({ status: 400, msg: 'Bad request.Verify your data' });
-
-      await data.update(fields, {
-          where: {
-              id
-          }
-      });
-      return res.status(200).json({msg: `Update product id ${id}`});
+    await data.update(fields, {
+      where: {
+        id,
+      },
+    });
+    return res.status(200).json({ msg: `Update product id ${id}` });
   } catch (error) {
-      console.log(error);
-      return res.status(500).json("internal server error");
+    console.log(error);
+    return res.status(500).json("internal server error");
   }
 };
