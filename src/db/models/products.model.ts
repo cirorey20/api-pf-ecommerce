@@ -25,19 +25,19 @@ export default (sequelize: any, DataTypes: any) => {
     image!: string;
     date!: string;
 
-    //producto puede tener muchas caegoryas
+    //producto puede tener muchas categorias
     static associate(models: any) {
-      console.log("PRODUCTS");
-      Products.belongsToMany(models.Orders, {
-        through: "product_orders",
+      Products.hasMany(models.Review);
+      Products.hasMany(models.Favorites);
+      Products.hasMany(models.ProductOrders);
+      Products.belongsToMany(models.Categories, {
+        through: "product_categories",
       });
-
       //   Products.hasMany(models.Categories, {
       //     as: "product_category",
       //   });
       // }
     }
-
   }
 
   Products.init(

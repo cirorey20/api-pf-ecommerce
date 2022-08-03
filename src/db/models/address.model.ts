@@ -19,7 +19,9 @@ export default (sequelize: any, DataTypes: any) => {
     street_number!: string;
     apartment_floor!: string;
     zip_code!: string;
-    static associate(models: any) {}
+    static associate(models: any) {
+      Address.hasMany(models.Orders);
+    }
   }
   Address.init(
     {
@@ -56,8 +58,8 @@ export default (sequelize: any, DataTypes: any) => {
     },
     {
       sequelize,
-      tableName: "address",
+      tableName: "Address",
     }
   );
-  return "Address";
+  return Address;
 };
