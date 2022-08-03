@@ -18,6 +18,7 @@ export default (sequelize: any, DataTypes: any) => {
     date!: string;
     time!: string;
 
+
     static associate(models: any) {
       console.log("ORDERS");
       //una order puede tener muchos productos
@@ -25,7 +26,9 @@ export default (sequelize: any, DataTypes: any) => {
         through: "product_orders",
       });
     }
+
   }
+
   Orders.init(
     {
       id: {

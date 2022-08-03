@@ -24,6 +24,7 @@ export default (sequelize: any, DataTypes: any) => {
     enable!: boolean;
     image!: string;
     date!: string;
+
     //producto puede tener muchas caegoryas
     static associate(models: any) {
       console.log("PRODUCTS");
@@ -36,6 +37,7 @@ export default (sequelize: any, DataTypes: any) => {
       //   });
       // }
     }
+
   }
 
   Products.init(
