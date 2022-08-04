@@ -2,13 +2,47 @@ import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
 const { Products, Categories, Review, Users } = sequelize.models;
 
+const { Op } = require("sequelize");
+
 export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
     //devuelvo un arreglo
+    const { categories, price, name } = req.query;
     const allData = await Products.findAll();
+
+    let newRows = allData.map((r: any) => {
+      let products = r?.dataValues;
+      return products;
+    });
+
+    //for price
+    if (price === "asc") {
+      let asc = newRows.sort((first, second) => first.price - second.price);
+      return res.send(asc);
+    } else if (price === "desc") {
+      let desc = newRows.sort((first, second) => second.price - first.price);
+      return res.send(desc);
+    }
+
+    if (name) {
+      let nameSort = newRows.sort((prev: any, next: any) => {
+        if (prev.name > next.name) return 1;
+        if (prev.name < next.name) return -1;
+        return 0;
+      });
+      return res.send(nameSort);
+    }
+    if (name === "Z-A") {
+      let nameSort = newRows.sort((prev: any, next: any) => {
+        if (prev.name > next.name) return -1;
+        if (prev.name < next.name) return 1;
+        return 0;
+      });
+      return res.send(nameSort);
+    }
     return res.status(202).json(allData);
   } catch (error) {
     console.log(error);
@@ -70,20 +104,25 @@ export const getProductById = async (
   try {
     const { id } = req.params;
     const product = await Products.findByPk(id, {
-      include: [{
-        model: Categories,
-        through: {
-          attributes: []
-        }
-      }, {
-        model: Review,
-        include: [{
-          model: Users,
-          attributes: {
-            exclude: ['password', 'rol',]
-          }
-        }]
-      }]
+      include: [
+        {
+          model: Categories,
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Review,
+          include: [
+            {
+              model: Users,
+              attributes: {
+                exclude: ["password", "rol"],
+              },
+            },
+          ],
+        },
+      ],
     });
     if (!product)
       return res.status(404).json({ status: 404, msg: "Product not found" });
