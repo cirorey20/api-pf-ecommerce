@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
-const { Products } = sequelize.models;
+const { Products, Categories, Review, Users } = sequelize.models;
 
 export const getProducts = async (
   req: Request,
@@ -69,10 +69,25 @@ export const getProductById = async (
   //const idProduct = req.params.idProduct as unknown as number;
   try {
     const { id } = req.params;
-    const product = await Products.findByPk(id);
+    const product = await Products.findByPk(id, {
+      include: [{
+        model: Categories,
+        through: {
+          attributes: []
+        }
+      }, {
+        model: Review,
+        include: [{
+          model: Users,
+          attributes: {
+            exclude: ['password', 'rol',]
+          }
+        }]
+      }]
+    });
     if (!product)
       return res.status(404).json({ status: 404, msg: "Product not found" });
-    return res.status(200).json({ usuario: product, msg: "Product", id });
+    return res.status(200).json(product);
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
