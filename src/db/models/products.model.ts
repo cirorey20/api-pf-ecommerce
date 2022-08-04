@@ -30,13 +30,7 @@ export default (sequelize: any, DataTypes: any) => {
       Products.hasMany(models.Review);
       Products.hasMany(models.Favorites);
       Products.hasMany(models.ProductOrders);
-      Products.belongsToMany(models.Categories, {
-        through: "product_categories",
-      });
-      //   Products.hasMany(models.Categories, {
-      //     as: "product_category",
-      //   });
-      // }
+      Products.hasMany(models.ProductCategories);
     }
   }
 

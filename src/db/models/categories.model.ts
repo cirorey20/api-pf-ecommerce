@@ -14,10 +14,9 @@ export default (sequelize: any, DataTypes: any) => {
     id!: string;
     name!: string;
     image!: string;
+
     static associate(models: any) {
-      Categories.belongsToMany(models.Products, {
-        through: "product_categories",
-      });
+      Categories.hasMany(models.ProductCategories);
     }
   }
 
