@@ -27,13 +27,13 @@ export const getProducts = async (
       return res.send(desc);
     }
 
-    if (name) {
+    if (name === "A-Z") {
       let nameSort = newRows.sort((prev: any, next: any) => {
         if (prev.name > next.name) return 1;
         if (prev.name < next.name) return -1;
         return 0;
       });
-      return res.send(nameSort);
+      return res.status(202).json(nameSort);
     }
     if (name === "Z-A") {
       let nameSort = newRows.sort((prev: any, next: any) => {
@@ -41,8 +41,9 @@ export const getProducts = async (
         if (prev.name < next.name) return 1;
         return 0;
       });
-      return res.send(nameSort);
+      return res.status(202).json(nameSort);
     }
+
     return res.status(202).json(allData);
   } catch (error) {
     console.log(error);
