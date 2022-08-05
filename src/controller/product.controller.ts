@@ -12,6 +12,7 @@ export const getProducts = async (
   try {
     //devuelvo un arreglo
     const { categories, price, name } = req.query;
+
     const allData = await Products.findAll({
       include: [
         {
@@ -29,17 +30,29 @@ export const getProducts = async (
       let products = r?.dataValues;
       return products;
     });
-    // console.log(categories);
-    if (categories) {
-      let genresInfo = newRows.map((e) =>
-        e.ProductCategories.map((r: any) => {
-          return {
-            name: r.toJSON().Category.name,
-          };
-        })
-      );
 
-      return res.send(genresInfo);
+    if (categories) {
+      let filterCategory = newRows.filter((e) => {
+        if (e.ProductCategories[0].Category.name === categories) {
+          return newRows;
+        }
+      });
+      let newArray = filterCategory.map((e) => {
+        return {
+          id: e.id,
+          name: e.name,
+          description: e.description,
+          price: e.price,
+          stock: e.stock,
+          enable: e.enable,
+          image: e.image,
+          category: e.ProductCategories[0].Category.name,
+        };
+      });
+      if (newArray.length === 0)
+        return res.status(404).json("NO EXISTE CATEGORIA");
+
+      return res.status(202).json(newArray);
     }
 
     //for price
