@@ -3,7 +3,6 @@ import { Model, UUIDV4 } from "sequelize";
 interface CategoriesAttributes {
   id: string;
   name: string;
-  image: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -13,7 +12,6 @@ export default (sequelize: any, DataTypes: any) => {
   {
     id!: string;
     name!: string;
-    image!: string;
 
     static associate(models: any) {
       Categories.hasMany(models.ProductCategories);
@@ -31,9 +29,6 @@ export default (sequelize: any, DataTypes: any) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      image: {
-        type: DataTypes.STRING,
       },
     },
     {

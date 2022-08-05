@@ -21,6 +21,7 @@ export const createCategories = async (
 ): Promise<Response> => {
   try {
     const { name, image } = req.body;
+
     const findCategorie = await Categories.findOne({ where: { name } });
     if (findCategorie) {
       return res.send("Ya existe una categoria con este nombre");
