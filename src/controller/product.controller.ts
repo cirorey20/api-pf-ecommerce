@@ -32,12 +32,18 @@ export const getProducts = async (
     });
 
     if (categories) {
-      let filterCategory = newRows.filter((e) => {
-        if (e.ProductCategories[0].Category.name === categories) {
+      let filteraArray = newRows.filter((e) => {
+        if (
+          e.ProductCategories[0]?.Category?.name === categories ||
+          e.ProductCategories[1]?.Category?.name === categories ||
+          e.ProductCategories[2]?.Category?.name === categories ||
+          e.ProductCategories[3]?.Category?.name === categories ||
+          e.ProductCategories[4]?.Category?.name === categories
+        ) {
           return newRows;
         }
       });
-      let newArray = filterCategory.map((e) => {
+      let newArray = filteraArray.map((e) => {
         return {
           id: e.id,
           name: e.name,
@@ -46,7 +52,7 @@ export const getProducts = async (
           stock: e.stock,
           enable: e.enable,
           image: e.image,
-          category: e.ProductCategories[0].Category.name,
+          category: e.ProductCategories.map((e: any) => e.Category.name),
         };
       });
       if (newArray.length === 0) {
@@ -97,7 +103,7 @@ export const createProducts = async (
     //llega data del form
     const { name, description, price, stock, image, categorie } = req.body;
     //validamos si hay campos vacios
-    if (!name || !description) {
+    if (!name || !description || !price || !stock || !image || !categorie) {
       return res.status(404).json({ error: "Faltan espacios por llenar" });
     }
     //creamos el producto
