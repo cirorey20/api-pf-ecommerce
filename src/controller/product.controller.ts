@@ -49,10 +49,11 @@ export const getProducts = async (
           category: e.ProductCategories[0].Category.name,
         };
       });
-      if (newArray.length === 0)
+      if (newArray.length === 0) {
         return res.status(404).json("NO EXISTE CATEGORIA");
-
-      return res.status(202).json(newArray);
+      } else {
+        return res.status(202).json(newArray);
+      }
     }
 
     //for price
