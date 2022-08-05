@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
-const { Products, Categories, Review, Users } = sequelize.models;
+const { Products, Categories, Review, Users, ProductCategories } =
+  sequelize.models;
 
 const { Op } = require("sequelize");
 
@@ -11,12 +12,35 @@ export const getProducts = async (
   try {
     //devuelvo un arreglo
     const { categories, price, name } = req.query;
-    const allData = await Products.findAll();
+    const allData = await Products.findAll({
+      include: [
+        {
+          model: ProductCategories,
+          include: [
+            {
+              model: Categories,
+            },
+          ],
+        },
+      ],
+    });
 
     let newRows = allData.map((r: any) => {
       let products = r?.dataValues;
       return products;
     });
+    // console.log(categories);
+    if (categories) {
+      let genresInfo = newRows.map((e) =>
+        e.ProductCategories.map((r: any) => {
+          return {
+            name: r.toJSON().Category.name,
+          };
+        })
+      );
+
+      return res.send(genresInfo);
+    }
 
     //for price
     if (price === "asc") {
@@ -44,7 +68,7 @@ export const getProducts = async (
       return res.status(202).json(nameSort);
     }
 
-    return res.status(202).json(allData);
+    return res.status(202).json(newRows);
   } catch (error) {
     console.log(error);
     return res.status(404).json({ error: "Error -->> getProducts" });
@@ -57,7 +81,7 @@ export const createProducts = async (
 ): Promise<Response> => {
   try {
     //llega data del form
-    const { name, description, price, stock, image } = req.body;
+    const { name, description, price, stock, image, categorie } = req.body;
     //validamos si hay campos vacios
     if (!name || !description) {
       return res.status(404).json({ error: "Faltan espacios por llenar" });
@@ -70,7 +94,21 @@ export const createProducts = async (
       stock,
       image,
     });
-    //respondemos el mensaje con el producto
+
+    const arrayCategorie = categorie.map((data: any) => ({ name: data }));
+    let categories = await Categories.findAll({
+      where: {
+        [Op.or]: arrayCategorie,
+      },
+    });
+
+    categories.map(async (r: any) => {
+      await ProductCategories.create({
+        ProductId: createProduct.toJSON().id,
+        CategoryId: r.toJSON().id,
+      });
+    });
+
     return res
       .status(202)
       .send({ messaje: "Created Successfully :D", createProduct });
@@ -107,10 +145,12 @@ export const getProductById = async (
     const product = await Products.findByPk(id, {
       include: [
         {
-          model: Categories,
-          through: {
-            attributes: [],
-          },
+          model: ProductCategories,
+          include: [
+            {
+              model: Categories,
+            },
+          ],
         },
         {
           model: Review,

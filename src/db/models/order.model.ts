@@ -19,7 +19,6 @@ export default (sequelize: any, DataTypes: any) => {
     time!: string;
 
     static associate(models: any) {
-      console.log("ORDERS");
       //una order puede tener muchos productos
       Orders.belongsTo(models.Address);
       Orders.belongsTo(models.Users);
