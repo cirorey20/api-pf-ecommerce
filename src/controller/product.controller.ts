@@ -87,7 +87,12 @@ export const getProducts = async (
       });
       return res.status(202).json(nameSort);
     }
-
+    if (name && name!=="Z-A" && name!=="A-Z"){
+        let productName = newRows.filter((r) =>
+        r.name.includes(name)
+      );
+      return res.status(202).json(productName);
+    }
     return res.status(202).json(newRows);
   } catch (error) {
     console.log(error);
