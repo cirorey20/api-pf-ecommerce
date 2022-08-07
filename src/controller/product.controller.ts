@@ -9,6 +9,7 @@ export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  
   try {
     //devuelvo un arreglo
     const { categories, price, name } = req.query;
@@ -241,3 +242,26 @@ export const updateProduct = async (
     return res.status(500).json("internal server error");
   }
 };
+
+
+export const nameProducts = async (
+  
+): Promise<any> => {
+
+  //const valores = await getProducts;
+ /*  const name = req.query?.name;
+  try{
+    if(name){
+       let nameInfo = await valores.filter((e:any)=>e.name.includes(name))
+      nameInfo?
+      res.status(200).send(nameInfo) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
+    }else res.status(200).send(valores)
+    
+  }catch(err){
+    console.log(err)
+  } */
+  console.log( "Esto es valores")
+ return "valores"
+}
+
+
