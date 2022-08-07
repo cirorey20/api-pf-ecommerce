@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { SearchPathable } from "sequelize/types";
 import sequelize from "../config/sequelize";
 const { Products, Categories, Review, Users, ProductCategories } =
   sequelize.models;
@@ -9,11 +10,11 @@ export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  
+  //nameProducts(req, res)
   try {
     //devuelvo un arreglo
-    const { categories, price, name } = req.query;
-
+    const { categories, price, name, searchName } = req.query;
+     
     const allData = await Products.findAll({
       include: [
         {
@@ -26,6 +27,8 @@ export const getProducts = async (
         },
       ],
     });
+
+   
 
     let newRows = allData.map((r: any) => {
       let products = r?.dataValues;
@@ -93,6 +96,9 @@ export const getProducts = async (
         r.name.includes(name)
       );
       return res.status(202).json(productName);
+    }
+    if(searchName){
+      return nameProducts(req, res)
     }
     return res.status(202).json(newRows);
   } catch (error) {
@@ -244,24 +250,26 @@ export const updateProduct = async (
 };
 
 
-export const nameProducts = async (
-  
-): Promise<any> => {
-
-  //const valores = await getProducts;
- /*  const name = req.query?.name;
+ export const nameProducts = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
+  const allProducts = await Products.findAll();
+  const searchName = req.query.searchName;
   try{
-    if(name){
-       let nameInfo = await valores.filter((e:any)=>e.name.includes(name))
-      nameInfo?
-      res.status(200).send(nameInfo) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
-    }else res.status(200).send(valores)
+    if(searchName){
+      let productsResult = allProducts.filter((e: any) => e.name.toLowerCase().includes(searchName.toString().toLowerCase()))
+      productsResult?
+      res.status(200).send(productsResult) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
+    }
     
   }catch(err){
     console.log(err)
-  } */
-  console.log( "Esto es valores")
- return "valores"
-}
+  }
+  return res.status(500).json("internal server error");
+  
+} 
+
+
 
 
