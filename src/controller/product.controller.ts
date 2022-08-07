@@ -198,7 +198,7 @@ export const updateProduct = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { id, name, description, price, stock, image, date, category_id } =
+  const { id, name, description, price, stock, image, date, categories, enable } =
     req.body as {
       id: number;
       name: string;
@@ -207,10 +207,12 @@ export const updateProduct = async (
       stock: number;
       image: string;
       date: string;
-      category_id: number;
+      categories: string[];
+      enable: boolean
     };
 
   try {
+
     const fields: any = {};
     if (name) fields.name = name;
     if (description) fields.description = description;
@@ -218,18 +220,56 @@ export const updateProduct = async (
     if (stock) fields.stock = stock;
     if (image) fields.image = image;
     if (date) fields.date = date;
-    if (category_id) fields.category_id = category_id;
+    if(enable === true || enable === false) fields.enable = enable;
+    // if (categories) fields.categories = categories;
 
-    if (Object.keys(fields).length === 0 || !id)
+    if (Object.keys(fields).length === 0 && (categories?.length === 0 || !Array.isArray(categories)) || !id)
       return res
         .status(400)
         .json({ status: 400, msg: "Bad request.Verify your data" });
 
-    await Products.update(fields, {
+    const [,productUpdate] = await Products.update(fields, {
       where: {
         id,
       },
+      returning:true
     });
+
+
+    if(productUpdate.length === 0){
+      return res.status(400).json({status:400, msg:"Bad request.Product not exist"});
+    }
+
+    if (categories?.length > 0) {
+      await ProductCategories.destroy({
+        where: {
+          ProductId: id
+        }
+      });
+
+      const newCategories = categories.map((data: any) => ({ name: data }));
+      let findCategories = await Categories.findAll({
+        where: {
+          [Op.or]: newCategories,
+        },
+      });
+
+      // findCategories.map(async (r: any) => {
+      //   await ProductCategories.create({
+      //     ProductId: id,
+      //     CategoryId: r.toJSON().id,
+      //   });
+      // });
+
+      for(let r of findCategories){
+        await ProductCategories.create({
+          ProductId: id,
+          CategoryId: r.toJSON().id,
+        })
+      }
+
+    }
+
     return res.status(200).json({ msg: `Update product id ${id}` });
   } catch (error) {
     console.log(error);
