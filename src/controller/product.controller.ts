@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { SearchPathable } from "sequelize/types";
 import sequelize from "../config/sequelize";
 const { Products, Categories, Review, Users, ProductCategories } =
@@ -14,6 +14,7 @@ export const getProducts = async (
   try {
     //devuelvo un arreglo
     const { categories, price, name, searchName } = req.query;
+    console.log(categories);
      
     const allData = await Products.findAll({
       include: [
@@ -35,34 +36,53 @@ export const getProducts = async (
       return products;
     });
 
-    if (categories) {
-      let filteraArray = newRows.filter((e) => {
-        if (
-          e.ProductCategories[0]?.Category?.name === categories ||
-          e.ProductCategories[1]?.Category?.name === categories ||
-          e.ProductCategories[2]?.Category?.name === categories ||
-          e.ProductCategories[3]?.Category?.name === categories ||
-          e.ProductCategories[4]?.Category?.name === categories
-        ) {
-          return newRows;
-        }
-      });
-      let newArray = filteraArray.map((e) => {
-        return {
-          id: e.id,
-          name: e.name,
-          description: e.description,
-          price: e.price,
-          stock: e.stock,
-          enable: e.enable,
-          image: e.image,
-          category: e.ProductCategories.map((e: any) => e.Category.name),
-        };
-      });
-      if (newArray.length === 0) {
-        return res.status(404).json("NO EXISTE CATEGORIA");
-      } else {
-        return res.status(202).json(newArray);
+    // if (categories) {
+    //   let filteraArray = newRows.filter((e) => {
+    //     if (
+    //       e.ProductCategories[0]?.Category?.name === categories ||
+    //       e.ProductCategories[1]?.Category?.name === categories ||
+    //       e.ProductCategories[2]?.Category?.name === categories ||
+    //       e.ProductCategories[3]?.Category?.name === categories ||
+    //       e.ProductCategories[4]?.Category?.name === categories
+    //     ) {
+    //       return newRows;
+    //     }
+    //   });
+    //   let newArray = filteraArray.map((e) => {
+    //     return {
+    //       id: e.id,
+    //       name: e.name,
+    //       description: e.description,
+    //       price: e.price,
+    //       stock: e.stock,
+    //       enable: e.enable,
+    //       image: e.image,
+    //       category: e.ProductCategories.map((e: any) => e.Category.name),
+    //     };
+    //   });
+    //   if (newArray.length === 0) {
+    //     return res.status(404).json("NO EXISTE CATEGORIA");
+    //   } else {
+    //     return res.status(202).json(newArray);
+    //   }
+    // }
+    if(categories){
+      if(typeof(categories) === 'string'){
+        newRows = newRows.filter(p => {
+          const dataCategories = p.ProductCategories.map((c:any) => c.toJSON().Category.name);
+          return dataCategories.includes(categories)
+        })
+      }else if(Array.isArray(categories)){
+        // for(let category of categories){ //Filtra productos por las categorias seleccionadas a la vez
+        //   newRows = newRows.filter(p => {
+        //     const dataCategories = p.ProductCategories.map((c:any) => c.toJSON().Category.name); 
+        //     return dataCategories.includes(category)
+        //   })
+        // }
+        newRows = newRows.filter(p => {
+          const dataCategories = p.ProductCategories.map((c:any) => c.toJSON().Category.name);
+          return categories.some(c => dataCategories.includes(c));
+        })
       }
     }
 
