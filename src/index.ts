@@ -8,7 +8,8 @@ import routerApi from "./routers/index";
 import { logError, errorHandler } from "./middlewares/error.handler";
 
 const app: Express = express();
-const port: number = 3001;
+// const port: number = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
 
