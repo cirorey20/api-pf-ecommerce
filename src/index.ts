@@ -1,6 +1,7 @@
 // const express = require('express');
 import express, { Express, Request, Response, NextFunction } from "express";
-
+import dotenv from 'dotenv';
+dotenv.config();
 // const routerApi = require('./routers');
 import routerApi from "./routers/index";
 
@@ -38,6 +39,7 @@ app.use(logError);
 app.use(errorHandler);
 
 //por ultimo el puerto por donde escucha
-app.listen(port, (): void => {
+app.listen(process.env.PORT || port, (): void => {
+  console.log(`DATAURL ${process.env.DATABASE_URL}`);
   console.log(`Utilizando el puerto ${port}`);
 });
