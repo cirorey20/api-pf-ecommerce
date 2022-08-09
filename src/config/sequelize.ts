@@ -14,7 +14,8 @@ const url: any = process.env.DATABASE_URL
 
 const sequelize: Sequelize = new Sequelize(url, {
   dialect: "postgres",
-  logging: true,
+  logging: false,
+  ssl: false
 });
 
 setupModels(sequelize);
