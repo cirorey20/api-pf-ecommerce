@@ -11,20 +11,23 @@ const url: string = `${config.dbUrl}`;
 interface Options {
   dialect: any,
   logging: boolean
-  dialectOptions: object
+  ssl: any
 }
 
 let options: Options = {
   dialect: 'postgres', //elijo la db que voy a utilizar
   logging: config.isProd ? false : true,
-  dialectOptions: {}
+  ssl: {}
  }
   
  if(config.isProd) {
-  options.dialectOptions = {
-    ssl: {
-      rejectUnauthorized:false
-    }
+  // options.dialectOptions = {
+  //   ssl: {
+  //     rejectUnauthorized:false
+  //   }
+  // }
+  options.ssl = {
+    rejectUnauthorized:false
   }
  }
  
