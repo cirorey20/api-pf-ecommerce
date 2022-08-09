@@ -4,12 +4,18 @@ dotenv.config();
 
 
 const config:{
+    env:string,
+    isProd: any,
+
     dbUser:string,
     dbPassword:string,
     dbHost:string,
     dbName:string,
     dbPort:string
 } = {
+    env: process.env.NODE_ENV || 'dev',
+    isProd: process.env.NODE_ENV === 'production',
+
     dbUser: process.env.DB_USER || '',
     dbPassword: process.env.DB_PASSWORD || '',
     dbHost: process.env.DB_HOST || '',
