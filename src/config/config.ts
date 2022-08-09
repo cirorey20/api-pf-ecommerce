@@ -3,15 +3,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const config:{
-    env:string,
-    isProd:boolean,
-    dbUser:string,
-    dbPassword:string,
-    dbHost:string,
-    dbName:string,
-    dbPort:string,
-} = {
+// const config:{
+    
+//     dbUser:string,
+//     dbPassword:string,
+//     dbHost:string,
+//     dbName:string,
+//     dbPort:string,
+
+// } = {
+//     dbUser: process.env.DB_USER || '',
+//     dbPassword: process.env.DB_PASSWORD || '',
+//     dbHost: process.env.DB_HOST || '',
+//     dbName: process.env.DB_NAME || '',
+//     dbPort: process.env.DB_PORT || '',
+
+// }
+
+const config = {
     env: process.env.NODE_ENV || 'dev',
     isProd: process.env.NODE_ENV === 'production',
     dbUser: process.env.DB_USER || '',
@@ -19,6 +28,8 @@ const config:{
     dbHost: process.env.DB_HOST || '',
     dbName: process.env.DB_NAME || '',
     dbPort: process.env.DB_PORT || '',
+
+    dbUrl: process.env.DATABASE_URL,
 }
 // console.log("hola")
 

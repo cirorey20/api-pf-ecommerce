@@ -1,21 +1,42 @@
-// const {Sequelize} = require('sequelize');
 import { Sequelize } from "sequelize";
 
-// const setupModels = require('../db/models/index');
 import setupModels from "../db";
 
-// const {config} = require('../config/config');
 import { config } from "./config";
 
-const dbUrl: string = `postgres://${config.dbUser}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+// const dbUrlLocal: string = `postgres://${config.dbUser}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
 
-const sequelize: Sequelize = new Sequelize(dbUrl, {
-  dialect: "postgres",
-  logging: true,
-});
+const url: string = `${config.dbUrl}`;
+
+interface Options {
+  dialect: any,
+  logging: boolean
+  dialectOptions: object
+}
+
+let options: Options = {
+  dialect: 'postgres', //elijo la db que voy a utilizar
+  logging: config.isProd ? false : true,
+  dialectOptions: {}
+ }
+  
+ if(config.isProd) {
+  options.dialectOptions = {
+    ssl: {
+      rejectUnauthorized:false
+    }
+  }
+ }
+ 
+ 
+
+// const sequelize: Sequelize = new Sequelize(dbUrl, {
+//   dialect: "postgres",
+//   logging: true,
+// });
+const sequelize = new Sequelize(url, options);
 
 setupModels(sequelize);
 sequelize.sync({ force: false });
 
 export default sequelize;
-// module.exports = sequelize;
