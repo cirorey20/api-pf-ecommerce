@@ -9,7 +9,7 @@ import { logError, errorHandler } from "./middlewares/error.handler";
 
 const app: Express = express();
 // const port: number = 3001;
-const port = 3001 || process.env.PORT;
+const port = 5000 || process.env.PORT;
 
 app.use(express.json());
 
