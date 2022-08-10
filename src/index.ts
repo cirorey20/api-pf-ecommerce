@@ -40,6 +40,6 @@ app.use(errorHandler);
 
 //por ultimo el puerto por donde escucha
 app.listen(process.env.PORT || port, (): void => {
-  console.log(`DATAURL ${process.env.DATABASE_URL}`);
+  // console.log(`DATAURL ${process.env.DATABASE_URL}`);
   console.log(`Utilizando el puerto ${port}`);
 });

@@ -11,7 +11,7 @@ const config:{
     dbPassword:string,
     dbHost:string,
     dbName:string,
-    dbPort:string
+    dbPort:any
 } = {
     env: process.env.NODE_ENV || 'dev',
     isProd: process.env.NODE_ENV === 'production',
