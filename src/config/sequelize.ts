@@ -19,7 +19,7 @@ const sequelize: Sequelize = new Sequelize(url, {
 });
 
 setupModels(sequelize);
-sequelize.sync({ force: true });
+sequelize.sync({ force: false });
 
 export default sequelize;
 // module.exports = sequelize;

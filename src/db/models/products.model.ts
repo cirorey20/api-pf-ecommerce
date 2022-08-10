@@ -24,8 +24,16 @@ export default (sequelize: any, DataTypes: any) => {
     enable!: true;
     image!: string;
     date!: string;
-    static associate(models: any) {}
+
+    //producto puede tener muchas categorias
+    static associate(models: any) {
+      Products.hasMany(models.Review);
+      Products.hasMany(models.Favorites);
+      Products.hasMany(models.ProductOrders);
+      Products.hasMany(models.ProductCategories);
+    }
   }
+
   Products.init(
     {
       id: {
@@ -51,13 +59,16 @@ export default (sequelize: any, DataTypes: any) => {
       },
       enable: {
         type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
       },
       image: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       date: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         allowNull: false,
       },
     },
