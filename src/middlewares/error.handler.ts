@@ -1,4 +1,5 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
+import sequelize from "../config/sequelize";
 
 const logError: ErrorRequestHandler = (
   err: any,
@@ -10,11 +11,6 @@ const logError: ErrorRequestHandler = (
   console.log(err);
   next(err);
 };
-// function logError (err:error, req:Request, res:Response, next:NextFunction) {
-//     console.log('logError');
-//     console.log(err);
-//     next(err);
-// }
 
 const errorHandler: ErrorRequestHandler = (
   err: any,
@@ -29,16 +25,4 @@ const errorHandler: ErrorRequestHandler = (
   });
 };
 
-// function errorHandler(err, req, res, next) {
-//     console.log('function -> errorHandler');
-//     res.status(500).json({
-//         message: err.message,
-//         stack: err.stack,
-//     });
-// }
-
 export { logError, errorHandler };
-// module.exports = {
-//     logError,
-//     errorHandler
-// }

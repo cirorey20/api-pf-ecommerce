@@ -32,6 +32,9 @@ export default (sequelize: any, DataTypes: any) => {
       },
     },
     {
+      timestamps: true,
+      createdAt: false,
+      updatedAt: false,
       sequelize,
       modelName: "Categories",
     }

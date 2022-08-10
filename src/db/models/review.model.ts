@@ -59,6 +59,9 @@ export default (sequelize: any, DataTypes: any) => {
     },
     {
       sequelize,
+      timestamps: true,
+      createdAt: false,
+      updatedAt: false,
       modelName: "Review",
     }
   );
