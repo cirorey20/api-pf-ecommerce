@@ -20,7 +20,7 @@ export const createCategories = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { name, image } = req.body;
+    const { name } = req.body;
 
     const findCategorie = await Categories.findOne({ where: { name } });
     if (findCategorie) {
@@ -29,7 +29,7 @@ export const createCategories = async (
     if (!name) {
       return res.status(404).json({ Error: "Te faltan espacios por llenar" });
     }
-    const createCategorie = await Categories.create({ name, image });
+    const createCategorie = await Categories.create({ name });
     return res
       .status(202)
       .json({ Message: "createCategori Succefully", createCategorie });

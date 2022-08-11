@@ -66,7 +66,7 @@ const tokenSign = async (user: any) => {
     }, //TODO: Payload ! Carga útil
     "autho",
     {
-      expiresIn: "24h", //expira en 24Horas
+      expiresIn: "50h", //expira en 24Horas
     }
   );
 };

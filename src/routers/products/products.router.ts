@@ -12,7 +12,8 @@ import {
 
 router.get("/", getProducts);
 router.get("/:id", getProductById);
-router.post("/createProducts", checkAuth, checkRoleAuth, createProducts);
+router.post("/createProducts", createProducts);
 router.put("/updateProduct", checkAuth, checkRoleAuth, updateProduct);
 //router.delete("/deleteProducts/:id", deleteProducts);
 export default router;
+//checkAuth, checkRoleAuth,
