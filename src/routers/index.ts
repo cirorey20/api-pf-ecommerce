@@ -3,7 +3,6 @@ import postsRouter from "./users/user.router";
 import products from "./products/products.router";
 import categories from "./categories/categories.router";
 
-
 function routerApi(app: Express): void {
   const router: Router = express.Router();
   app.use("/api/v1", router); //ruta de api principal api

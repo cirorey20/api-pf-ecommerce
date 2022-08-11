@@ -1,6 +1,9 @@
 // const express = require('express');
 import express, { Express, Request, Response, NextFunction } from "express";
 
+//const stripe = require('stripe);
+import stripe from "stripe";
+
 // const routerApi = require('./routers');
 import routerApi from "./routers/index";
 
@@ -36,6 +39,14 @@ routerApi(app); //y pasamos app como argumento
 //aca queremos poner los middleware de errores
 app.use(logError);
 app.use(errorHandler);
+
+
+///////////////////////////////////
+//con esta direccion vemos que se esta enviando desde el front
+app.post("/api/checkout", (req: any, res: any) => {
+  console.log(req.body)
+  res.send(`received`)
+});
 
 //por ultimo el puerto por donde escucha
 app.listen(port, (): void => {

@@ -1,5 +1,6 @@
 // const express = require('express');
 import express, { Router } from "express";
+import routerApi from "..";
 const router: Router = express.Router();
 
 import { getUsers, createUser } from "../../controller/user.controller";
