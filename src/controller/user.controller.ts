@@ -2,6 +2,23 @@ import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
 const { Users } = sequelize.models;
 const check = require("../middlewares/autho");
+const {OAuth2Client} = require('google-auth-library');
+
+const client = new OAuth2Client('677723278728-s1jkmrbpvjhqf98nolkmji6ir1256ql9.apps.googleusercontent.com');
+async function verify(token:string, cid:string) {
+  const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: cid,  // Specify the CLIENT_ID of the app that accesses the backend
+      // Or, if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+  });
+  const payload = ticket.getPayload();
+  console.log(payload)
+  const userid = payload['sub'];
+  return payload;
+  // If request specified a G Suite domain:
+  // const domain = payload['hd'];
+}
 
 export const getUsers = async (
   req: Request,
@@ -73,6 +90,42 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     console.log(error);
     return res.status(404).json({ Error: "Internal Server Error -->> login" });
   }
+};
+
+export const loginGoogle = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { credential, clientId } = req.body.response; //llega info por formulario
+    const dataUser = await verify(credential, clientId).catch(console.error);
+console.log(dataUser)
+    if(!dataUser.email_verified) return res.status(404).send('Verificacion de email invalida');
+
+    let user = await Users.findOne({ where: { email: dataUser.email } }); //buscamos si existe en la db por el email
+    if (!user) {
+     user = await Users.create({
+        name:dataUser.name,
+        last_name:dataUser.given_name,
+        email: dataUser.email,
+        password: 'google',
+        avatar: dataUser.picture,
+      });
+    }
+    // const checkPassword = await check.compare(
+    //   password,
+    //   user?.toJSON().password
+    // ); // si existe comparamos la password para que coincida
+    const tokenSession = await check.tokenSign(user);
+    if (user) {
+      //si coincide mandamos el usuario
+      return res.status(200).send({ user, tokenSession });
+    } else {
+      return res.status(409).send("Contraseña invalida"); //si no coincide mandamos mensaje de error
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ Error: "Internal Server Error -->> login" });
+  }
+
+
 };
 
 export const updateUser = async (
