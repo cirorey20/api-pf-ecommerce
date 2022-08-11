@@ -3,6 +3,8 @@ import sequelize from "../config/sequelize";
 const { Users } = sequelize.models;
 const check = require("../middlewares/autho");
 const {OAuth2Client} = require('google-auth-library');
+const jwt = require("jsonwebtoken");
+
 
 const client = new OAuth2Client('677723278728-s1jkmrbpvjhqf98nolkmji6ir1256ql9.apps.googleusercontent.com');
 async function verify(token:string, cid:string) {
@@ -182,3 +184,29 @@ export const promote = async (
       .json({ Error: "Intersal Server Errorr -->> promote" });
   }
 };
+
+
+export const getUserLogin = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const tokenSession = req.headers.authorization; //Accedemos a el token del user
+    const data = jwt.verify(tokenSession, "autho"); //Verificamos que sea un token valido
+    if(data?.id){
+      const user = await Users.findByPk(data.id);
+      if(user){
+        return res.status(200).json({user, tokenSession});
+      }
+    }
+
+
+    return res.status(404).send('User not found')
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(409)
+      .send({ error: "Debes estar logueado para realizar esta accion" });
+  }
+};
+
