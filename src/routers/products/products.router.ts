@@ -1,7 +1,7 @@
 // const express = require('express');
 import express, { Router } from "express";
 const router: Router = express.Router();
-
+import { checkRoleAuth, checkAuth } from "../../middlewares/autho";
 import {
   getProducts,
   createProducts,
@@ -13,6 +13,7 @@ import {
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 router.post("/createProducts", createProducts);
-router.put("/updateProduct", updateProduct);
+router.put("/updateProduct", checkAuth, checkRoleAuth, updateProduct);
 //router.delete("/deleteProducts/:id", deleteProducts);
 export default router;
+//checkAuth, checkRoleAuth,
