@@ -1,6 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,linux,windows,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,linux,windows,macos
-
+.yarn
 ### Linux ###
 *~
 
@@ -216,3 +216,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/node,linux,windows,macos
+yarn.lock

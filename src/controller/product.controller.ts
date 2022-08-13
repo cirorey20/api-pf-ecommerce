@@ -319,7 +319,7 @@ export const updateProduct = async (
   try{
     if(searchName){
       let productsResult = allProducts.filter((e: any) => e.name.toLowerCase().includes(searchName.toString().toLowerCase()))
-      productsResult?
+      return productsResult?
       res.status(200).send(productsResult) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
     }
     
