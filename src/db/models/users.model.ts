@@ -1,5 +1,5 @@
 import { Model, UUIDV4, Sequelize } from "sequelize";
-
+const bcrypt = require("bcryptjs");
 interface UsersAttributes {
   id: string;
   name: string;
@@ -48,14 +48,21 @@ export default (sequelize: any, DataTypes: any) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+        set(value) {
+          //encriptamos la password que entre
+          const hash = bcrypt.hashSync(value, 10);
+          this.setDataValue("password", hash);
+        },
       },
       rol: {
         type: DataTypes.STRING,
         allowNull: false,
+        defaultValue: "user",
       },
       enable: {
         type: DataTypes.BOOLEAN,
@@ -64,7 +71,9 @@ export default (sequelize: any, DataTypes: any) => {
       },
       avatar: {
         type: DataTypes.STRING,
-        allowNull: false,
+        defaultValue:
+          "https://happytravel.viajes/wp-content/uploads/2020/04/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+        // allowNull: false"
       },
       date: {
         type: DataTypes.DATE,
@@ -73,6 +82,9 @@ export default (sequelize: any, DataTypes: any) => {
       },
     },
     {
+      timestamps: true,
+      createdAt: false,
+      updatedAt: false,
       sequelize,
       modelName: "Users",
     }
