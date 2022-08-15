@@ -1650,10 +1650,10 @@
   "resolved" "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz"
   "version" "3.1.1"
 
-"stripe@^10.1.0":
-  "integrity" "sha512-J5TF8ACY+aE2S0N9Uch/rXTmMwKvcrakoHFMW0hLOFpOEAUF6C+zHU4U9zNmJVBS7TQ2TLFb22EA9aHNUWi0Vg=="
-  "resolved" "https://registry.npmjs.org/stripe/-/stripe-10.1.0.tgz"
-  "version" "10.1.0"
+"stripe@^10.2.0":
+  "integrity" "sha512-y0tW31r8rk0cGAVN+lxZUU0yqcFq7y+Kmi0SKuNPxDVKRx1aCvU1xpnVR9mZv5wNQOKpsx5C14UpeenoYu8+7A=="
+  "resolved" "https://registry.npmjs.org/stripe/-/stripe-10.2.0.tgz"
+  "version" "10.2.0"
   dependencies:
     "@types/node" ">=8.1.0"
     "qs" "^6.10.3"

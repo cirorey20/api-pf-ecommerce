@@ -48,17 +48,26 @@ app.use(errorHandler);
 
 ///////////////////////////////////
 //con esta direccion vemos que se esta enviando desde el front
-app.post("/api/checkout", async (req: any, res: any) => {
-  const {id, amount} = req.body
- const payments = await stripe.paymentIntents.create({
+app.post("/api/checkout", async (req, res) => {
+  //console.log(req.body)
+  try{
+  const {id,amount} = req.body
+  console.log(req.body)
+  const payments = await stripe.paymentIntents.create({
     amount,
     currency: "USD",
     description: "Saxophone",
     payment_method: id,
     confirm: true,
-  })
+  });
+  
   console.log(payments)
-    res.send({message:'Successfull payment'})
+
+  res.send({message:"succesfull payment"});
+} catch (error: any){
+  console.log(error)
+  res.json({message: error.raw.message});
+ }
 });
 
 //por ultimo el puerto por donde escucha
