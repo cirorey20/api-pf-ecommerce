@@ -71,7 +71,9 @@ export default (sequelize: any, DataTypes: any) => {
       },
       avatar: {
         type: DataTypes.STRING,
-        allowNull: false,
+        defaultValue:
+          "https://happytravel.viajes/wp-content/uploads/2020/04/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+        // allowNull: false"
       },
       date: {
         type: DataTypes.DATE,
@@ -80,9 +82,9 @@ export default (sequelize: any, DataTypes: any) => {
       },
     },
     {
-      timestamps: true, 
-      createdAt: false, 
-      updatedAt: false ,
+      timestamps: true,
+      createdAt: false,
+      updatedAt: false,
       sequelize,
       modelName: "Users",
     }

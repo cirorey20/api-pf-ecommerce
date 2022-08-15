@@ -18,6 +18,6 @@ router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
 router.put("/updateUser/:id", checkAuth, updateUser);
-router.post("/promote/:id", checkAuth, checkRoleAuth, promote);
+router.post("/promote/:id", promote);
 
 export default router;

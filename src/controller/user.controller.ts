@@ -53,7 +53,10 @@ export const createUser = async (
         last_name,
         email,
         password,
-        avatar,
+        avatar: avatar
+          ? avatar
+          : avatar ||
+            "ttps://happytravel.viajes/wp-content/uploads/2020/04/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
         date,
         rol,
       });
