@@ -1,12 +1,5 @@
 // const express = require('express');
 import express, { Express, Request, Response, NextFunction } from "express";
-
-//const stripe = require('stripe);
-import Stripe from "stripe";
-const stripe = new Stripe("sk_test_51LVJYJHeLDBhzI8LXDlLzcZWIsSCo6GMkYgzGp6bwUehEgk5MNuHfd4yglFMBvS3WE8hX2uUgKxzBzLm7XYL1ClK00RbiU5gw2",  {
-  apiVersion: '2022-08-01',
-})
-
 // const routerApi = require('./routers');
 import routerApi from "./routers/index";
 
@@ -44,31 +37,6 @@ routerApi(app); //y pasamos app como argumento
 //aca queremos poner los middleware de errores
 app.use(logError);
 app.use(errorHandler);
-
-
-///////////////////////////////////
-//con esta direccion vemos que se esta enviando desde el front
-app.post("/api/checkout", async (req, res) => {
-  //console.log(req.body)
-  try{
-  const {id,amount} = req.body
-  console.log(req.body)
-  const payments = await stripe.paymentIntents.create({
-    amount,
-    currency: "USD",
-    description: "Saxophone",
-    payment_method: id,
-    confirm: true,
-  });
-  
-  console.log(payments)
-
-  res.send({message:"succesfull payment"});
-} catch (error: any){
-  console.log(error)
-  res.json({message: error.raw.message});
- }
-});
 
 //por ultimo el puerto por donde escucha
 app.listen(port, (): void => {
