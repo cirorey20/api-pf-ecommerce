@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
 import Stripe from "stripe";
 
-const stripe = new Stripe("sk_test_51LW3beKXLCV01PVdwurBDoeO3q4nVOvLpwO9fAq6WSmyYsJOQYeuLmWMpZ6X7L63A2GcVhXJr0hRAuTGM8iH1GEX00rmLFjTVS", {
+const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf", {
     apiVersion: '2022-08-01',
 });
 
@@ -40,7 +40,7 @@ export const getOrders = async (req: Request, res: Response): Promise<Response> 
 };
 
 export const checkout = async (req: Request, res: Response): Promise<Response> => {
-    const { id, amount, stateCart, allQuantity, customer } = req.body
+    const { id, amount, stateCart, detail, customer } = req.body
 
     try {
         const newCustomer = await stripe.customers.create({
@@ -51,29 +51,28 @@ export const checkout = async (req: Request, res: Response): Promise<Response> =
             //     country: 'CO'
             // }
         });
-
         const payments = await stripe.paymentIntents.create({
             amount: amount,
             currency: "USD",
-            description: "Saxophone",
+            description: detail,
             payment_method: id,
             confirm: true,
             customer: newCustomer.id,
-            receipt_email: 'jorgecamargo901@gmail.com'
+            receipt_email: customer.email,
         })
-
-        // Se crea la orden asociandole el user que hizo la compra y la direccion
+    
+        //    Se crea la orden asociandole el user que hizo la compra y la direccion
         let date: any = new Date()
         date = date.toISOString().split('T')[0]
         const order = await Orders.create({
-            state: 'seccess',
+            state: 'success',
             UserId: customer.id,
             // AddressId: '4f0c2b41-2952-46d7-87d0-0872c1b03a7c',
             date,
             time: date
         });
 
-        // // Se crea la orden por producti y se asocia a la orden total
+        // Se crea la orden por producti y se asocia a la orden total
         for (let product of stateCart) {
 
             const orderProducts = ProductOrders.create({
@@ -83,9 +82,13 @@ export const checkout = async (req: Request, res: Response): Promise<Response> =
             })
         }
 
-
-        console.log(payments.charges.data)
-        return res.status(200).json({ message: 'Successfull payment' });
+        // var data = payments.charges.data
+        // var url = data[0].receipt_url
+        //console.log(payments.charges.data)
+        // var data = payments.charges.data
+        // var url = data[0].receipt_url
+         console.log(payments)
+         return res.status(200).json({ message: 'Successfull payment'});
 
     } catch (error) {
         console.log(error);
