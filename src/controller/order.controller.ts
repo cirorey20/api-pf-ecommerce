@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
 import Stripe from "stripe";
 
-const stripe = new Stripe("sk_test_51LVJYJHeLDBhzI8LXDlLzcZWIsSCo6GMkYgzGp6bwUehEgk5MNuHfd4yglFMBvS3WE8hX2uUgKxzBzLm7XYL1ClK00RbiU5gw2", {
+const stripe = new Stripe("sk_test_51LXH3JCJgSlYWB07jGg0n09WsOsoH11cgiIgTk0KbsHXLVrMDjMQ9gW4FBWJpSlLFIjXlx9SG7qSYXOWsRuWtmS000C7ZtVpk1", {
     apiVersion: '2022-08-01',
 });
 
