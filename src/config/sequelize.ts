@@ -35,7 +35,7 @@ let sequelize =
     })
 
 setupModels(sequelize);
-sequelize.sync({ force: true });
+sequelize.sync({ force: false });
 
 export default sequelize;
 // module.exports = sequelize;

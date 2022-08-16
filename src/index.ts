@@ -43,7 +43,7 @@ app.use(logError);
 app.use(errorHandler);
 
 //////////////////////////////
-const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf",  {
+const stripe = new Stripe("sk_test_51LXH3JCJgSlYWB07jGg0n09WsOsoH11cgiIgTk0KbsHXLVrMDjMQ9gW4FBWJpSlLFIjXlx9SG7qSYXOWsRuWtmS000C7ZtVpk1",  {
   apiVersion: '2022-08-01',
 })
 app.post("/api/checkout", async (req: any, res: any) => {
