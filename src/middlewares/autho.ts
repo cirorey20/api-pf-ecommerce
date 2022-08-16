@@ -12,6 +12,7 @@ const checkRoleAuth = async (
   try {
     //  console.log(req.headers.authorization);
     const token = req.headers.authorization; //Accedemos a el token del user
+    console.log(token, "thi is token ");
     const tokenData = jwt.verify(token, "autho"); //Verificamos que sea un token valido
     const userData = await Users.findByPk(tokenData.id); //Traemos la informacion del usuario por id
     //validamos si el usuario en la propiedad role es admin

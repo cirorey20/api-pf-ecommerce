@@ -1,6 +1,8 @@
 // const express = require('express');
 import express, { Router } from "express";
+import sequelize from "../../config/sequelize";
 const router: Router = express.Router();
+const { Users } = sequelize.models;
 import { checkRoleAuth, checkAuth } from "../../middlewares/autho";
 import {
   getUsers,
@@ -18,6 +20,21 @@ router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
 router.put("/updateUser/:id", checkAuth, updateUser);
-router.post("/promote/:id", checkAuth, checkRoleAuth, promote);
+router.post("/promote/:id", promote);
+
+router.post("/createAdmin", async (req, res) => {
+  try {
+    const admin = await Users.create({
+      name: "Admin",
+      last_name: "Admin",
+      rol: "admin",
+      email: "admin@admin.com",
+      password: "admin",
+    });
+    return res.send("Admin creado");
+  } catch (error) {
+    return res.status(400).send("Ya existe el admin");
+  }
+});
 
 export default router;

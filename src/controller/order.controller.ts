@@ -8,7 +8,7 @@ import { Blob, Buffer } from "buffer";
 import { Stream } from "stream";
 
 
-const stripe = new Stripe("sk_test_51LW3beKXLCV01PVdwurBDoeO3q4nVOvLpwO9fAq6WSmyYsJOQYeuLmWMpZ6X7L63A2GcVhXJr0hRAuTGM8iH1GEX00rmLFjTVS", {
+const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf", {
     apiVersion: '2022-08-01',
 });
 
@@ -83,7 +83,7 @@ export const getOrderById = async (req: Request, res: Response): Promise<Respons
 };
 
 export const checkout = async (req: Request, res: Response): Promise<Response> => {
-    const { id, amount, stateCart, allQuantity, customer } = req.body
+    const { id, amount, stateCart, detail, customer } = req.body
 
     try {
         const newCustomer = await stripe.customers.create({
@@ -98,11 +98,11 @@ export const checkout = async (req: Request, res: Response): Promise<Response> =
         const payments = await stripe.paymentIntents.create({
             amount: amount,
             currency: "USD",
-            description: "Saxophone",
+            description: detail,
             payment_method: id,
             confirm: true,
             customer: newCustomer.id,
-            receipt_email: 'jorgecamargo901@gmail.com'
+            receipt_email: customer.email
         })
 
         // Se crea la orden asociandole el user que hizo la compra y la direccion
