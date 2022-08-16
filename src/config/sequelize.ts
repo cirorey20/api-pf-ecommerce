@@ -16,7 +16,7 @@ const url: any = process.env.DATABASE_URL
 //   dialect: "postgres",
 //   logging: false,
 //   ssl: false
-// });
+// })
 let sequelize =
   process.env.NODE_ENV === "production"
     ? new Sequelize(url, {
