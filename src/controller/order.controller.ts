@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
 import Stripe from "stripe";
+import nodemailer from 'nodemailer';
+import ReactPDF, { renderToString } from "@react-pdf/renderer";
+import fs from 'fs'
+import { Blob, Buffer } from "buffer";
+import { Stream } from "stream";
+
 
 const stripe = new Stripe("sk_test_51LW3beKXLCV01PVdwurBDoeO3q4nVOvLpwO9fAq6WSmyYsJOQYeuLmWMpZ6X7L63A2GcVhXJr0hRAuTGM8iH1GEX00rmLFjTVS", {
     apiVersion: '2022-08-01',
@@ -12,6 +18,42 @@ const { Orders, ProductOrders, Products, Users } = sequelize.models;
 export const getOrders = async (req: Request, res: Response): Promise<Response> => {
     try {
         const orders = await Orders.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'UserId'],
+            },
+            order: [
+                ['date', 'DESC']
+            ]
+            ,
+            include: [{
+                model: ProductOrders,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'ProductId', 'OrderId']
+                },
+                include: [{
+                    model: Products
+                }]
+            },
+            {
+                model: Users,
+                attributes: {
+                    exclude: ['password']
+                }
+            }]
+        });
+
+        return res.status(200).json(orders);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json("internal server error");
+    }
+};
+
+export const getOrderById = async (req: Request, res: Response): Promise<Response> => {
+    const { idOrder } = req.params;
+    try {
+        const order = await Orders.findByPk(idOrder, {
+
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'UserId'],
             },
@@ -32,7 +74,8 @@ export const getOrders = async (req: Request, res: Response): Promise<Response> 
             }]
         });
 
-        return res.status(200).json(orders);
+        if (!order) return res.status(404).json({ msg: 'Order not found' });
+        return res.status(200).json(order);
     } catch (error) {
         console.log(error);
         return res.status(500).json("internal server error");
@@ -66,7 +109,7 @@ export const checkout = async (req: Request, res: Response): Promise<Response> =
         let date: any = new Date()
         date = date.toISOString().split('T')[0]
         const order = await Orders.create({
-            state: 'seccess',
+            state: 'success',
             UserId: customer.id,
             // AddressId: '4f0c2b41-2952-46d7-87d0-0872c1b03a7c',
             date,
@@ -82,6 +125,45 @@ export const checkout = async (req: Request, res: Response): Promise<Response> =
                 quantity: product.quantity,
             })
         }
+
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            service: "gmail",
+            secure: true,
+            port: 465,
+            auth: {
+                user: 'jorgecamargo2012902@gmail.com',
+                pass: 'vuzsmyocfhxdyumm'
+            },
+            tls: {
+                ciphers: 'SSLv3',
+                rejectUnauthorized: false
+            }
+        });
+    
+    
+        // **** Build Email mailOptions for Nodemailer Transporter Object ***
+        let mailOptions: any = {
+            from: 'jorgecamargo2012902@gmail.com',
+            to: customer.email,
+            subject: 'Scheduled Report: send file pdf',
+            html: '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' + order.toJSON().id + '">click aqui</a></div>',
+    
+            //*** Nodemailer Attachment Section
+            // attachments: [{
+            //     filename: 'file.pdf',
+            //     content: buffer,
+            //     contentType: 'application/pdf'
+            // }]
+        };
+        transporter.sendMail(mailOptions, function (err) {
+            if (err) {
+                console.log('Transporter Error:  ' + err);
+                throw new Error('errorsito');
+            }
+            return console.log('Exito')
+        })
 
 
         console.log(payments.charges.data)
