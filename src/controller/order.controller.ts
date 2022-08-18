@@ -5,9 +5,7 @@ import { Op } from "sequelize";
 import { sendMail } from "../helpers/sendMail";
 
 const stripe = new Stripe(
- funtion-admin
-  "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
-
+  "sk_test_51LW3beKXLCV01PVdwurBDoeO3q4nVOvLpwO9fAq6WSmyYsJOQYeuLmWMpZ6X7L63A2GcVhXJr0hRAuTGM8iH1GEX00rmLFjTVS",
   {
     apiVersion: "2022-08-01",
   }
@@ -20,9 +18,9 @@ export const getOrders = async (
   res: Response
 ): Promise<Response> => {
   const { state, dateFrom, dateTo } = req.query as {
-    state: string,
-    dateFrom: string,
-    dateTo: string
+    state: string;
+    dateFrom: string;
+    dateTo: string;
   };
   const where: any = {};
 
@@ -30,13 +28,13 @@ export const getOrders = async (
     const from = new Date(dateFrom).getTime();
     const to = new Date(dateTo).getTime();
 
-    if (!(isNaN(from) && isNaN(to)) && (from <= to)) {
+    if (!(isNaN(from) && isNaN(to)) && from <= to) {
       where.date = {
         [Op.and]: {
           [Op.gte]: from,
-          [Op.lte]: to
-        }
-      }
+          [Op.lte]: to,
+        },
+      };
     }
   }
 
@@ -44,7 +42,7 @@ export const getOrders = async (
     where.state = state;
   }
 
-  console.log(where)
+  console.log(where);
 
   try {
     const orders = await Orders.findAll({
@@ -167,8 +165,10 @@ export const checkout = async (
 
     sendMail(
       [customer.email],
-      'Scheduled Report: send link order',
-      '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' + order.toJSON().id + '">Click in this link for view order</a></div>'
+      "Scheduled Report: send link order",
+      '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' +
+        order.toJSON().id +
+        '">Click in this link for view order</a></div>'
     );
 
     console.log(payments.charges.data);
