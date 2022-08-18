@@ -277,14 +277,69 @@ export const nameProducts = async (
 ): Promise<Response> => {
   const allProducts = await Products.findAll();
   const searchName = req.query.searchName;
-  try{
-    if(searchName){
-      let productsResult = allProducts.filter((e: any) => e.name.toLowerCase().includes(searchName.toString().toLowerCase()))
-      productsResult?
-      res.status(200).send(productsResult) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
+  try {
+    if (searchName) {
+      let productsResult = allProducts.filter((e: any) =>
+        e.name.toLowerCase().includes(searchName.toString().toLowerCase())
+      );
+      return productsResult
+        ? res.status(200).send(productsResult)
+        : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`);
     }
   } catch (err) {
     console.log(err);
   }
   return res.status(500).json("internal server error");
+};
+
+export const banend = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Products.findByPk(id);
+    Products.update(
+      {
+        enable: false,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
+};
+
+export const desbaned = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Products.findByPk(id);
+    Products.update(
+      {
+        enable: true,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
 };

@@ -8,7 +8,7 @@ import { Blob, Buffer } from "buffer";
 import { Stream } from "stream";
 
 const stripe = new Stripe(
-  "sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf",
+  "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
   {
     apiVersion: "2022-08-01",
   }
