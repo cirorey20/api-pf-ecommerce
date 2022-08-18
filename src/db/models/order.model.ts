@@ -5,7 +5,7 @@ interface OrdersAttributes {
   /* user_id: string;
   address_id: string; */
   state: string;
-  date: string;
+  date: Date;
   time: string;
 }
 
@@ -15,7 +15,7 @@ export default (sequelize: any, DataTypes: any) => {
     /*     user_id!: string;
     address_id!: string; */
     state!: string;
-    date!: string;
+    date!: Date;
     time!: string;
 
     static associate(models: any) {
@@ -47,7 +47,8 @@ export default (sequelize: any, DataTypes: any) => {
         allowNull: false,
       },
       date: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         allowNull: false,
       },
       time: {

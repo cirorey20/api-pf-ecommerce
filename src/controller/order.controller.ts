@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import sequelize from "../config/sequelize";
 import Stripe from "stripe";
-import nodemailer from "nodemailer";
-import ReactPDF, { renderToString } from "@react-pdf/renderer";
-import fs from "fs";
-import { Blob, Buffer } from "buffer";
-import { Stream } from "stream";
+import { Op } from "sequelize";
+import { sendMail } from "../helpers/sendMail";
 
 const stripe = new Stripe(
+ funtion-admin
   "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
+
   {
     apiVersion: "2022-08-01",
   }
@@ -20,8 +19,36 @@ export const getOrders = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  const { state, dateFrom, dateTo } = req.query as {
+    state: string,
+    dateFrom: string,
+    dateTo: string
+  };
+  const where: any = {};
+
+  if (dateFrom && dateTo) {
+    const from = new Date(dateFrom).getTime();
+    const to = new Date(dateTo).getTime();
+
+    if (!(isNaN(from) && isNaN(to)) && (from <= to)) {
+      where.date = {
+        [Op.and]: {
+          [Op.gte]: from,
+          [Op.lte]: to
+        }
+      }
+    }
+  }
+
+  if (state) {
+    where.state = state;
+  }
+
+  console.log(where)
+
   try {
     const orders = await Orders.findAll({
+      where,
       attributes: {
         exclude: ["createdAt", "updatedAt", "UserId"],
       },
@@ -126,7 +153,6 @@ export const checkout = async (
       state: "success",
       UserId: customer.id,
       // AddressId: '4f0c2b41-2952-46d7-87d0-0872c1b03a7c',
-      date,
       time: date,
     });
 
@@ -139,45 +165,11 @@ export const checkout = async (
       });
     }
 
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      service: "gmail",
-      secure: true,
-      port: 465,
-      auth: {
-        user: "jorgecamargo2012902@gmail.com",
-        pass: "vuzsmyocfhxdyumm",
-      },
-      tls: {
-        ciphers: "SSLv3",
-        rejectUnauthorized: false,
-      },
-    });
-
-    // **** Build Email mailOptions for Nodemailer Transporter Object ***
-    let mailOptions: any = {
-      from: "jorgecamargo2012902@gmail.com",
-      to: customer.email,
-      subject: "Scheduled Report: send file pdf",
-      html:
-        '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' +
-        order.toJSON().id +
-        '">click aqui</a></div>',
-
-      //*** Nodemailer Attachment Section
-      // attachments: [{
-      //     filename: 'file.pdf',
-      //     content: buffer,
-      //     contentType: 'application/pdf'
-      // }]
-    };
-    transporter.sendMail(mailOptions, function (err) {
-      if (err) {
-        console.log("Transporter Error:  " + err);
-        throw new Error("errorsito");
-      }
-      return console.log("Exito");
-    });
+    sendMail(
+      [customer.email],
+      'Scheduled Report: send link order',
+      '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' + order.toJSON().id + '">Click in this link for view order</a></div>'
+    );
 
     console.log(payments.charges.data);
     return res.status(200).json({ message: "Successfull payment" });
