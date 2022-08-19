@@ -8,7 +8,7 @@ import { Blob, Buffer } from "buffer";
 import { Stream } from "stream";
 
 const stripe = new Stripe(
-  "sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf",
+  "sk_test_51HmkyODqLWR8FNtItIo2gMij8gWymyLsPrv85yHYkTCZ31Xkr4el0sSiIIaTibp6mH2WjpXrAmDLB7pxxeyq4GlS00nA2d52JI",
   {
     apiVersion: "2022-08-01",
   }
@@ -184,5 +184,59 @@ export const checkout = async (
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
+  }
+};
+
+export const getOrdersByUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { idUser } = req.params;
+  console.log(idUser);
+  try {
+    const orders = await Orders.findAll({
+      where: { UserId: idUser },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "UserId"],
+      },
+      order: [["date", "DESC"]],
+      include: [
+        {
+          model: ProductOrders,
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "ProductId", "OrderId"],
+          },
+          include: [
+            {
+              model: Products,
+            },
+          ],
+        },
+        {
+          model: Users,
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+      ],
+    });
+
+    let newRows = orders.map((r: any) => {
+      let products = r?.dataValues;
+
+      const newObj = {
+        state: products.state,
+        description: products.ProductOrders.map(
+          (e: any) => e.Product.description
+        ),
+        image: products.ProductOrders.map((e: any) => e.Product.image),
+        date: products.date,
+        id: products.id,
+      };
+      return newObj;
+    });
+    return res.status(200).send(newRows);
+  } catch (err) {
+    return res.send(err);
   }
 };
