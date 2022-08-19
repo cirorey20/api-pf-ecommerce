@@ -9,7 +9,7 @@ export const generateCategories = async (
 ): Promise<Response> => {
   try {
     //creamos el producto
-    let categories = ["Cuerdas", "Electrónica", "Percusión", "Acústico", "Viento", "Metal"]
+    let categories = ["Cuerdas", "Electrónica", "Percusión", "Acústico", "Viento", "Metal", "Piano", "Guitarra", "Bajo", "Batería"]
     for(let i = 0; i < categories.length; i++) {
       await Categories.create({
         name: categories[i]

@@ -15,25 +15,24 @@ export const generateProducts = async (
   try {
     
     //creamos el producto
-    let categories = ["Cuerdas", ["Electrónica", "Percusión"], "Electrónica", "Percusión", ["Acústico", "Viento"], "Acústico", "Viento", ["Metal", "Cuerdas"], "Metal"]
+    let categories = ["Cuerdas", ["Electrónica", "Percusión"], ["Guitarra", "Cuerdas"], "Piano", "Guitarra", "Bajo", "Batería", "Electrónica", "Percusión", ["Acústico", "Viento"], "Acústico", "Viento", ["Metal", "Cuerdas"], "Metal"]
     let imgs = [
       "https://cdn.pixabay.com/photo/2015/06/08/08/30/instruments-801271_960_720.jpg","https://cdn.pixabay.com/photo/2015/11/12/00/41/piano-1039450_960_720.jpg",
       "https://cdn.pixabay.com/photo/2017/03/16/18/17/music-2149880_960_720.jpg","https://cdn.pixabay.com/photo/2017/03/28/23/13/guitar-2183684_960_720.jpg",
       "https://cdn.pixabay.com/photo/2017/05/10/19/42/guitar-2301723_960_720.jpg","https://cdn.pixabay.com/photo/2015/08/28/07/00/guitar-911546_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/08/10/17/40/guitar-1583851_960_720.jpg","https://cdn.pixabay.com/photo/2015/08/29/14/18/bass-913092_960_720.jpg"
     ]
-    for(let i = 0; i < 100; i++) {
+    for(let i = 0; i < 8; i++) {
       let pro = await Products.create({
         name: faker.commerce.productName(),
         description: faker.lorem.lines(),
         price: parseInt(faker.commerce.price(),10),
         stock: parseInt(faker.commerce.price(10, 20, 0)),
-        // categorie: [ categories[Math.floor(Math.random() * categories.length)] ],
         image: imgs[Math.floor(Math.random() * imgs.length)]
       })
-      // const arrayCategorie = categories.map((data: any) => ({ name: data }));
+      
       const arrayCategorie = { name: categories[Math.floor(Math.random() * categories.length)] };
-      console.log("SOY Ciro",arrayCategorie)
+      console.log("yo",arrayCategorie)
       // const arrayCategorie = "Cuerdas" ;
       let categorys = await Categories.findAll({
         where: {
