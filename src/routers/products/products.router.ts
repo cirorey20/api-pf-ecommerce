@@ -9,8 +9,12 @@ import {
   updateProduct,
   banend,
   desbaned,
+  generateProducts
   //deleteProducts,
 } from "../../controller/product.controller";
+
+//primero crear categorias con la ruta cateogires/generateCategories
+router.get("/generateProducts", generateProducts); 
 
 router.get("/", getProducts);
 router.get("/:id", getProductById);

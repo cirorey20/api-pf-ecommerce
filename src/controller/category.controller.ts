@@ -1,6 +1,26 @@
 import sequelize from "../config/sequelize";
 import { Request, Response } from "express";
 const { Categories } = sequelize.models;
+const faker = require("faker")
+
+export const generateCategories = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    //creamos el producto
+    let categories = ["Cuerdas", "Electrónica", "Percusión", "Acústico", "Viento", "Metal"]
+    for(let i = 0; i < categories.length; i++) {
+      await Categories.create({
+        name: categories[i]
+      })
+    }
+    return res.status(200).json("se crearon categories");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("internal server error");
+  }
+};
 
 export const getCategories = async (
   req: Request,
