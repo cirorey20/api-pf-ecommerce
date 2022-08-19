@@ -28,13 +28,62 @@ export const getUsers = async (
   res: Response
 ): Promise<Response> => {
   try {
-    console.log(req.body);
+    const { name, searchName } = req.query;
+
+    console.log(req.query, "este es el query");
     const allData = await Users.findAll();
-    return res.status(200).json(allData);
+
+    let newRows = allData.map((r: any) => {
+      let products = r?.dataValues;
+      return products;
+    });
+    //console.log(name, "this is name");
+    if (name === "A-Z") {
+      let nameSort = newRows.sort((prev: any, next: any) => {
+        if (prev.name > next.name) return 1;
+        if (prev.name < next.name) return -1;
+        return 0;
+      });
+      return res.status(202).json(nameSort);
+    }
+    if (name === "Z-A") {
+      let nameSort = newRows.sort((prev: any, next: any) => {
+        if (prev.name > next.name) return -1;
+        if (prev.name < next.name) return 1;
+        return 0;
+      });
+      return res.status(202).json(nameSort);
+    }
+    if (searchName) {
+      return nameUsers(req, res);
+    }
+
+    return res.status(200).json(newRows);
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
   }
+};
+
+export const nameUsers = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const allUsers = await Users.findAll();
+  const searchName = req.query.searchName;
+  try {
+    if (searchName) {
+      let productsResult = allUsers.filter((e: any) =>
+        e.name.toLowerCase().includes(searchName.toString().toLowerCase())
+      );
+      return productsResult
+        ? res.status(200).send(productsResult)
+        : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return res.status(500).json("internal server error");
 };
 
 export const createUser = async (
@@ -79,8 +128,12 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     const { email, password } = req.body; //llega info por formulario
     const user = await Users.findOne({ where: { email } }); //buscamos si existe en la db por el email
     if (!user) {
-      res.status(404).send("Usuario no existe"); //si no existe  mandamos mensaje de no existe
+      return res.status(404).send("Usuario no existe"); //si no existe  mandamos mensaje de no existe
     }
+    if (user?.toJSON()?.enable === false) {
+      return res.status(403).send("Usuario baneado");
+    }
+
     const checkPassword = await check.compare(
       password,
       user?.toJSON().password
@@ -118,6 +171,10 @@ export const loginGoogle = async (
         password: "google",
         avatar: dataUser.picture,
       });
+    }
+
+    if (user?.toJSON()?.enable === false) {
+      return res.status(403).send("Estas baneado");
     }
     // const checkPassword = await check.compare(
     //   password,
@@ -175,6 +232,57 @@ export const promote = async (
     Users.update(
       {
         rol: "admin",
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
+};
+
+export const banend = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Users.findByPk(id);
+    Users.update(
+      {
+        enable: false,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
+};
+export const desbaned = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Users.findByPk(id);
+    Users.update(
+      {
+        enable: true,
       },
       {
         where: {
