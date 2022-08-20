@@ -2,9 +2,59 @@ import e, { Request, Response } from "express";
 import { SearchPathable } from "sequelize/types";
 import sequelize from "../config/sequelize";
 const { Products, Categories, Review, Users, ProductCategories } =
-  sequelize.models;
+sequelize.models;
 
+const faker = require("faker")
 const { Op } = require("sequelize");
+
+
+export const generateProducts = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    
+    //creamos el producto
+    let categories = ["Cuerdas", ["Electrónica", "Percusión"], "Electrónica", "Percusión", ["Acústico", "Viento"], "Acústico", "Viento", ["Metal", "Cuerdas"], "Metal"]
+    let imgs = [
+      "https://cdn.pixabay.com/photo/2015/06/08/08/30/instruments-801271_960_720.jpg","https://cdn.pixabay.com/photo/2015/11/12/00/41/piano-1039450_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2017/03/16/18/17/music-2149880_960_720.jpg","https://cdn.pixabay.com/photo/2017/03/28/23/13/guitar-2183684_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2017/05/10/19/42/guitar-2301723_960_720.jpg","https://cdn.pixabay.com/photo/2015/08/28/07/00/guitar-911546_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/08/10/17/40/guitar-1583851_960_720.jpg","https://cdn.pixabay.com/photo/2015/08/29/14/18/bass-913092_960_720.jpg"
+    ]
+    for(let i = 0; i < 100; i++) {
+      let pro = await Products.create({
+        name: faker.commerce.productName(),
+        description: faker.lorem.lines(),
+        price: parseInt(faker.commerce.price(),10),
+        stock: parseInt(faker.commerce.price(10, 20, 0)),
+        // categorie: [ categories[Math.floor(Math.random() * categories.length)] ],
+        image: imgs[Math.floor(Math.random() * imgs.length)]
+      })
+      // const arrayCategorie = categories.map((data: any) => ({ name: data }));
+      const arrayCategorie = { name: categories[Math.floor(Math.random() * categories.length)] };
+      console.log("SOY Ciro",arrayCategorie)
+      // const arrayCategorie = "Cuerdas" ;
+      let categorys = await Categories.findAll({
+        where: {
+          [Op.or]: arrayCategorie,
+        },
+      });
+      categorys.map(async (r: any) => {
+        await ProductCategories.create({
+          ProductId: pro.toJSON().id,
+          CategoryId: r.toJSON().id,
+        });
+      });
+    }
+    return res
+      .status(202)
+      .send({ messaje: "Created Successfully :D"});
+  } catch (error) {
+    console.log(error);
+    return res.send({ error: "Internal Server Error -->> createProducts" });
+  }
+};
 
 export const getProducts = async (
   req: Request,
@@ -277,14 +327,69 @@ export const nameProducts = async (
 ): Promise<Response> => {
   const allProducts = await Products.findAll();
   const searchName = req.query.searchName;
-  try{
-    if(searchName){
-      let productsResult = allProducts.filter((e: any) => e.name.toLowerCase().includes(searchName.toString().toLowerCase()))
-      productsResult?
-      res.status(200).send(productsResult) : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`)
+  try {
+    if (searchName) {
+      let productsResult = allProducts.filter((e: any) =>
+        e.name.toLowerCase().includes(searchName.toString().toLowerCase())
+      );
+      return productsResult
+        ? res.status(200).send(productsResult)
+        : res.status(400).send(`⚠ Ops!!! name not found.Enter valido name`);
     }
   } catch (err) {
     console.log(err);
   }
   return res.status(500).json("internal server error");
+};
+
+export const banend = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Products.findByPk(id);
+    Products.update(
+      {
+        enable: false,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
+};
+
+export const desbaned = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { id } = req.params;
+    const userData = await Products.findByPk(id);
+    Products.update(
+      {
+        enable: true,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    return res.json("El usuario ahora es Administrador");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> promote" });
+  }
 };
