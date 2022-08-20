@@ -173,6 +173,7 @@ export const checkout = async (
       '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' + order.toJSON().id + '">Click in this link for view order</a></div>'
     );
 
+    
     console.log(payments.charges.data);
     return res.status(200).json({ message: "Successfull payment" });
   } catch (error) {
