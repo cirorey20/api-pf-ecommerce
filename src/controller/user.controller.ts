@@ -1,5 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
+import { AUTHENTICATE_ACCOUNT } from "../helpers/contentMails";
+import { sendMail } from "../helpers/sendMail";
 const { Users } = sequelize.models;
 const check = require("../middlewares/autho");
 const { OAuth2Client } = require("google-auth-library");
@@ -109,6 +111,13 @@ export const createUser = async (
         date,
         rol,
       });
+
+      sendMail(
+        [allData?.toJSON().email],
+        'Authenticate your account',
+        AUTHENTICATE_ACCOUNT(allData.toJSON().name, allData.toJSON().last_name, allData.toJSON().id, allData.toJSON().hash_code)
+      );
+
       return res
         .status(200)
         .json({ Message: "User Create Succesfully :D", allData });
@@ -132,6 +141,9 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     }
     if (user?.toJSON()?.enable === false) {
       return res.status(403).send("Usuario baneado");
+    }
+    if(user?.toJSON()?.authenticated === false){
+      return res.status(401).json({msg: 'Tu cuenta no esta autenticada', status:401});
     }
 
     const checkPassword = await check.compare(
@@ -166,15 +178,24 @@ export const loginGoogle = async (
     if (!user) {
       user = await Users.create({
         name: dataUser.name,
-        last_name: dataUser.given_name,
+        last_name: '',
         email: dataUser.email,
         password: "google",
         avatar: dataUser.picture,
       });
+      sendMail(
+        [user?.toJSON().email],
+        'Authenticate your account',
+        AUTHENTICATE_ACCOUNT(user.toJSON().name, user.toJSON().last_name, user.toJSON().id, user.toJSON().hash_code)
+      );
     }
 
     if (user?.toJSON()?.enable === false) {
       return res.status(403).send("Estas baneado");
+    }
+
+    if(user?.toJSON()?.authenticated === false){
+      return res.status(401).json({msg: 'Tu cuenta no esta autenticada', status:401});
     }
     // const checkPassword = await check.compare(
     //   password,
@@ -319,5 +340,31 @@ export const getUserLogin = async (
     return res
       .status(409)
       .send({ error: "Debes estar logueado para realizar esta accion" });
+  }
+};
+
+
+export const authenticateAccount = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { idUser, code } = req.body;
+  try {
+    
+    const user = await Users.findByPk(idUser);
+    if(user){
+      if(user?.toJSON().authenticated === true){
+        return res.status(406).json({msg:'Usuario ya autenticado', status:406});
+      }
+      if(user.toJSON().hash_code === code){
+        user.update({ authenticated:true });
+        return res.status(200).json({msg: 'Usuario autenticado', status:200});
+      }
+    }
+    return res.status(404).json({msg: 'Error al intentar autenticar', status:404})
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send('Error en el servidor')
   }
 };
