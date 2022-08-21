@@ -13,17 +13,14 @@ const stripe = new Stripe(
 
 const { Orders, ProductOrders, Products, Users } = sequelize.models;
 
-
-
-
 export const getOrders = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { state, dateFrom, dateTo } = req.query as {
-    state: string,
-    dateFrom: string,
-    dateTo: string
+    state: string;
+    dateFrom: string;
+    dateTo: string;
   };
   const where: any = {};
 
@@ -31,13 +28,13 @@ export const getOrders = async (
     const from = new Date(dateFrom).getTime();
     const to = new Date(dateTo).getTime();
 
-    if (!(isNaN(from) && isNaN(to)) && (from <= to)) {
+    if (!(isNaN(from) && isNaN(to)) && from <= to) {
       where.date = {
         [Op.and]: {
           [Op.gte]: from,
-          [Op.lte]: to
-        }
-      }
+          [Op.lte]: to,
+        },
+      };
     }
   }
 
@@ -45,7 +42,7 @@ export const getOrders = async (
     where.state = state;
   }
 
-  console.log(where)
+  console.log(where);
 
   try {
     const orders = await Orders.findAll({
@@ -168,8 +165,10 @@ export const checkout = async (
 
     sendMail(
       [customer.email],
-      'Scheduled Report: send link order',
-      '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' + order.toJSON().id + '">Click in this link for view order</a></div>'
+      "Scheduled Report: send link order",
+      '<div><h1>Paid succesfull</h1><a href="http://localhost:3000/orders/' +
+        order.toJSON().id +
+        '">Click in this link for view order</a></div>'
     );
 
     console.log(payments.charges.data);
@@ -185,12 +184,11 @@ export const getOrdersByUser = async (
   res: Response
 ): Promise<Response> => {
   const { idUser } = req.params;
-  console.log(idUser);
   try {
     const orders = await Orders.findAll({
       where: { UserId: idUser },
       attributes: {
-        exclude: ["createdAt", "updatedAt", "UserId"],
+        exclude: ["createdAt", "updatedAt", "UserId", "date", "time"],
       },
       order: [["date", "DESC"]],
       include: [
@@ -202,33 +200,27 @@ export const getOrdersByUser = async (
           include: [
             {
               model: Products,
+              attributes: {
+                exclude: ["price", "stock"],
+              },
             },
           ],
         },
-        {
-          model: Users,
-          attributes: {
-            exclude: ["password"],
-          },
-        },
       ],
     });
-
-    let newRows = orders.map((r: any) => {
-      let products = r?.dataValues;
-
-      const newObj = {
-        state: products.state,
-        description: products.ProductOrders.map(
-          (e: any) => e.Product.description
-        ),
-        image: products.ProductOrders.map((e: any) => e.Product.image),
-        date: products.date,
-        id: products.id,
+    let result = orders.map((e: any) => {
+      //console.log(e.toJSON());
+      return {
+        state: e.state,
+        productsOrder: e.toJSON().ProductOrders.map((e: any) => ({
+          ...e.Product,
+          quantity: e.quantity,
+          idProductsOrders: e.id,
+        })),
       };
-      return newObj;
     });
-    return res.status(200).send(newRows);
+
+    return res.status(200).send(result);
   } catch (err) {
     return res.send(err);
   }
