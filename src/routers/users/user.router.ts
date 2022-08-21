@@ -12,6 +12,8 @@ import {
   promote,
   loginGoogle,
   getUserLogin,
+  banend,
+  desbaned,
 } from "../../controller/user.controller";
 //usamos midlewares para comparar el rol y si esta logueado
 router.get("/", checkAuth, checkRoleAuth, getUsers);
@@ -21,6 +23,8 @@ router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
 router.put("/updateUser/:id", checkAuth, updateUser);
 router.post("/promote/:id", promote);
+router.post("/banend/:id", banend);
+router.post("/desbaned/:id", desbaned);
 
 router.post("/createAdmin", async (req, res) => {
   try {
