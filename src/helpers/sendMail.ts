@@ -8,8 +8,8 @@ export const sendMail = (customers:string[], subject:string, htmlBody:string) =>
         secure: true,
         port: 465,
         auth: {
-          user: "jorgecamargo2012902@gmail.com",
-          pass: "vuzsmyocfhxdyumm",
+          user: "universalmusicpf12@gmail.com",
+          pass: "ysurdkrtruggsdih",
         },
         tls: {
           ciphers: "SSLv3",
@@ -19,18 +19,11 @@ export const sendMail = (customers:string[], subject:string, htmlBody:string) =>
   
       // **** Build Email mailOptions for Nodemailer Transporter Object ***
       let mailOptions: any = {
-        from: "jorgecamargo2012902@gmail.com",
         to: customers,
         subject,
         html: htmlBody,
-  
-        //*** Nodemailer Attachment Section
-        // attachments: [{
-        //     filename: 'file.pdf',
-        //     content: buffer,
-        //     contentType: 'application/pdf'
-        // }]
       };
+      
       transporter.sendMail(mailOptions, function (err) {
         if (err) {
           console.log("Transporter Error:  " + err);
