@@ -5,7 +5,7 @@ import { Op } from "sequelize";
 import { sendMail } from "../helpers/sendMail";
 
 const stripe = new Stripe(
-  "sk_test_51LW3beKXLCV01PVdwurBDoeO3q4nVOvLpwO9fAq6WSmyYsJOQYeuLmWMpZ6X7L63A2GcVhXJr0hRAuTGM8iH1GEX00rmLFjTVS",
+  "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
   {
     apiVersion: "2022-08-01",
   }
