@@ -11,7 +11,7 @@ const stripe = new Stripe(
   }
 );
 
-const { Orders, ProductOrders, Products, Users } = sequelize.models;
+const { Orders, ProductOrders, Products, Users, Address } = sequelize.models;
 
 export const getOrders = async (
   req: Request,
@@ -199,7 +199,7 @@ export const checkout = async (
       // }
     });
 
-    const payments = await stripe.paymentIntents.create({
+    const payments: any = await stripe.paymentIntents.create({
       amount: amount,
       currency: "USD",
       description: detail,
@@ -208,14 +208,28 @@ export const checkout = async (
       customer: newCustomer.id,
       receipt_email: customer.email,
     });
-
+    console.log(payments.charges.data[0].payment_method_details.card.brand);
     // Se crea la orden asociandole el user que hizo la compra y la direccion
     let date: any = new Date();
     date = date.toISOString().split("T")[0];
+
+    const address = await Address.findByPk(customer.AddressId);
+
+    const addressText = `Province : ${address?.toJSON().province} ,City : ${
+      address?.toJSON().city
+    } , Locality : ${address?.toJSON().locality} ,Numbe:  ${
+      address?.toJSON().street_number
+    }  , Apartament : ${address?.toJSON().apartment_floor} `.replace("/n", "");
+
+    //console.log(addressText);
+
     const order = await Orders.create({
       state: "success",
       UserId: customer.id,
-      // AddressId: '4f0c2b41-2952-46d7-87d0-0872c1b03a7c',
+      customer: customer.name + " " + customer.last_name,
+      address_order: addressText,
+      payment_method:
+        payments.charges.data[0].payment_method_details.card.brand,
       date,
       time: date,
     });
@@ -226,6 +240,7 @@ export const checkout = async (
         OrderId: order.toJSON().id,
         ProductId: product.id,
         quantity: product.quantity,
+        price: product.price,
       });
     }
 
@@ -237,7 +252,7 @@ export const checkout = async (
         '">Click in this link for view order</a></div>'
     );
 
-    console.log(payments.charges.data);
+    //  console.log(payments.charges.data);
     return res.status(200).json({ message: "Successfull payment" });
   } catch (error) {
     console.log(error);

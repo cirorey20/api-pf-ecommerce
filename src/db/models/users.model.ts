@@ -10,8 +10,8 @@ interface UsersAttributes {
   enable: boolean;
   avatar: string;
   date: string;
-  authenticated: boolean,
-  hash_code: string
+  authenticated: boolean;
+  hash_code: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -25,12 +25,13 @@ export default (sequelize: any, DataTypes: any) => {
     enable!: boolean;
     avatar!: string;
     date!: string;
-    authenticated!:boolean;
-    hash_code!:string;
+    authenticated!: boolean;
+    hash_code!: string;
     static associate(models: any) {
       Users.hasMany(models.Orders);
       Users.hasMany(models.Review);
       Users.hasMany(models.Favorites);
+      Users.belongsTo(models.Address);
     }
   }
   Users.init(
@@ -86,16 +87,16 @@ export default (sequelize: any, DataTypes: any) => {
       },
       authenticated: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       hash_code: {
         type: DataTypes.STRING,
         defaultValue: (() => {
-          const code = Math.random().toString(36).substring(2,10);
+          const code = Math.random().toString(36).substring(2, 10);
           const hash = bcrypt.hashSync(code, 10);
-          return hash.replace('/','');
-        })()
-      }
+          return hash.replace("/", "");
+        })(),
+      },
     },
     {
       timestamps: true,
