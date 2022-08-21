@@ -5,7 +5,7 @@ import { Op } from "sequelize";
 import { sendMail } from "../helpers/sendMail";
 
 const stripe = new Stripe(
-  "sk_test_51HmkyODqLWR8FNtItIo2gMij8gWymyLsPrv85yHYkTCZ31Xkr4el0sSiIIaTibp6mH2WjpXrAmDLB7pxxeyq4GlS00nA2d52JI",
+  "sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf",
   {
     apiVersion: "2022-08-01",
   }
@@ -102,6 +102,9 @@ export const getOrderById = async (
   res: Response
 ): Promise<Response> => {
   const { idOrder } = req.params;
+  console.log("hola")
+  console.log(idOrder)
+  
   try {
     const order = await Orders.findByPk(idOrder, {
       attributes: {
@@ -127,7 +130,7 @@ export const getOrderById = async (
         },
       ],
     });
-
+    console.log("por acá")
     if (!order) return res.status(404).json({ msg: "Order not found" });
     return res.status(200).json(order);
   } catch (error) {
