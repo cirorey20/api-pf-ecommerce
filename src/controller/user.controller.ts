@@ -2,7 +2,7 @@ import express, { Router, Request, Response, NextFunction } from "express";
 import sequelize from "../config/sequelize";
 import { AUTHENTICATE_ACCOUNT } from "../helpers/contentMails";
 import { sendMail } from "../helpers/sendMail";
-const { Users } = sequelize.models;
+const { Users, Address } = sequelize.models;
 const check = require("../middlewares/autho");
 const { OAuth2Client } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
@@ -99,23 +99,27 @@ export const createUser = async (
     if (valitation) return res.send("Este usuario ya existe");
 
     if (name && last_name && email && password && avatar) {
+      let address = await Address.create();
       const allData = await Users.create({
         name,
         last_name,
         email,
         password,
-        avatar: avatar
-          ? avatar
-          : avatar ||
-            "ttps://happytravel.viajes/wp-content/uploads/2020/04/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+        avatar,
         date,
         rol,
+        AddressId: address.toJSON().id,
       });
 
       sendMail(
         [allData?.toJSON().email],
-        'Authenticate your account',
-        AUTHENTICATE_ACCOUNT(allData.toJSON().name, allData.toJSON().last_name, allData.toJSON().id, allData.toJSON().hash_code)
+        "Authenticate your account",
+        AUTHENTICATE_ACCOUNT(
+          allData.toJSON().name,
+          allData.toJSON().last_name,
+          allData.toJSON().id,
+          allData.toJSON().hash_code
+        )
       );
 
       return res
@@ -142,8 +146,10 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     if (user?.toJSON()?.enable === false) {
       return res.status(403).send("Usuario baneado");
     }
-    if(user?.toJSON()?.authenticated === false){
-      return res.status(401).json({msg: 'Tu cuenta no esta autenticada', status:401});
+    if (user?.toJSON()?.authenticated === false) {
+      return res
+        .status(401)
+        .json({ msg: "Tu cuenta no esta autenticada", status: 401 });
     }
 
     const checkPassword = await check.compare(
@@ -176,17 +182,24 @@ export const loginGoogle = async (
 
     let user = await Users.findOne({ where: { email: dataUser.email } }); //buscamos si existe en la db por el email
     if (!user) {
+      let address = await Address.create();
       user = await Users.create({
         name: dataUser.name,
-        last_name: '',
+        last_name: "",
         email: dataUser.email,
         password: "google",
         avatar: dataUser.picture,
+        AddressId: address.toJSON().id,
       });
       sendMail(
         [user?.toJSON().email],
-        'Authenticate your account',
-        AUTHENTICATE_ACCOUNT(user.toJSON().name, user.toJSON().last_name, user.toJSON().id, user.toJSON().hash_code)
+        "Authenticate your account",
+        AUTHENTICATE_ACCOUNT(
+          user.toJSON().name,
+          user.toJSON().last_name,
+          user.toJSON().id,
+          user.toJSON().hash_code
+        )
       );
     }
 
@@ -194,8 +207,10 @@ export const loginGoogle = async (
       return res.status(403).send("Estas baneado");
     }
 
-    if(user?.toJSON()?.authenticated === false){
-      return res.status(401).json({msg: 'Tu cuenta no esta autenticada', status:401});
+    if (user?.toJSON()?.authenticated === false) {
+      return res
+        .status(401)
+        .json({ msg: "Tu cuenta no esta autenticada", status: 401 });
     }
     // const checkPassword = await check.compare(
     //   password,
@@ -343,28 +358,31 @@ export const getUserLogin = async (
   }
 };
 
-
 export const authenticateAccount = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { idUser, code } = req.body;
   try {
-    
     const user = await Users.findByPk(idUser);
-    if(user){
-      if(user?.toJSON().authenticated === true){
-        return res.status(406).json({msg:'Usuario ya autenticado', status:406});
+    if (user) {
+      if (user?.toJSON().authenticated === true) {
+        return res
+          .status(406)
+          .json({ msg: "Usuario ya autenticado", status: 406 });
       }
-      if(user.toJSON().hash_code === code){
-        user.update({ authenticated:true });
-        return res.status(200).json({msg: 'Usuario autenticado', status:200});
+      if (user.toJSON().hash_code === code) {
+        user.update({ authenticated: true });
+        return res
+          .status(200)
+          .json({ msg: "Usuario autenticado", status: 200 });
       }
     }
-    return res.status(404).json({msg: 'Error al intentar autenticar', status:404})
-
+    return res
+      .status(404)
+      .json({ msg: "Error al intentar autenticar", status: 404 });
   } catch (error) {
     console.log(error);
-    return res.status(500).send('Error en el servidor')
+    return res.status(500).send("Error en el servidor");
   }
 };
