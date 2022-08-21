@@ -265,12 +265,11 @@ export const getOrdersByUser = async (
   res: Response
 ): Promise<Response> => {
   const { idUser } = req.params;
-  console.log(idUser);
   try {
     const orders = await Orders.findAll({
       where: { UserId: idUser },
       attributes: {
-        exclude: ["createdAt", "updatedAt", "UserId"],
+        exclude: ["createdAt", "updatedAt", "UserId", "date", "time"],
       },
       order: [["date", "DESC"]],
       include: [
@@ -282,33 +281,27 @@ export const getOrdersByUser = async (
           include: [
             {
               model: Products,
+              attributes: {
+                exclude: ["price", "stock"],
+              },
             },
           ],
         },
-        {
-          model: Users,
-          attributes: {
-            exclude: ["password"],
-          },
-        },
       ],
     });
-
-    let newRows = orders.map((r: any) => {
-      let products = r?.dataValues;
-
-      const newObj = {
-        state: products.state,
-        description: products.ProductOrders.map(
-          (e: any) => e.Product.description
-        ),
-        image: products.ProductOrders.map((e: any) => e.Product.image),
-        date: products.date,
-        id: products.id,
+    let result = orders.map((e: any) => {
+      //console.log(e.toJSON());
+      return {
+        state: e.state,
+        productsOrder: e.toJSON().ProductOrders.map((e: any) => ({
+          ...e.Product,
+          quantity: e.quantity,
+          idProductsOrders: e.id,
+        })),
       };
-      return newObj;
     });
-    return res.status(200).send(newRows);
+
+    return res.status(200).send(result);
   } catch (err) {
     return res.send(err);
   }
