@@ -20,7 +20,7 @@ export const addReview = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { name_id, product_id, title, description, rating  } = req.body;
+    const { name_id, ProductId, title, description, rating  } = req.body;
 
     // const findReview = await Review.findOne({ where: { name } });
     // if (findReview) {
@@ -30,7 +30,7 @@ export const addReview = async (
     }
     let date: any = new Date();
     date = date.toISOString().split("T")[0];
-    const createReview = await Review.create({ name_id, product_id, date, title, description, rating });
+    const createReview = await Review.create({ name_id, ProductId, date, title, description, rating });
     return res
       .status(202)
       .json({ Message: "Create review succefully", createReview });

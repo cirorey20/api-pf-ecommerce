@@ -3,6 +3,7 @@ import { Model, UUIDV4 } from "sequelize";
 interface ProductOrdersAttributes {
   id: string;
   quantity: number;
+  price: number;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -12,6 +13,7 @@ export default (sequelize: any, DataTypes: any) => {
   {
     id!: string;
     quantity!: number;
+    price!: number;
     static associate(models: any) {
       ProductOrders.belongsTo(models.Orders);
       ProductOrders.belongsTo(models.Products);
@@ -26,6 +28,10 @@ export default (sequelize: any, DataTypes: any) => {
         primaryKey: true,
       },
       quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      price: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

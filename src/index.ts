@@ -13,6 +13,9 @@ const port: number = 3001;
 
 app.use(express.json());
 
+//Exponer archivos estaticos
+app.use('/static', express.static(__dirname + '/../public'));
+
 //aca vamos a poner los cors
 
 app.use((req: Request, res: Response, next: NextFunction): void => {
@@ -30,7 +33,6 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 app.get("/", (req: Request, res: Response): void => {
   res.send("Esta funcionando correctamente!");
 });
-
 //aca utilizamos la funcion que contiene todas las rutas
 routerApi(app); //y pasamos app como argumento
 
@@ -39,12 +41,12 @@ app.use(logError);
 app.use(errorHandler);
 
 //////////////////////////////
-const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf",  {
+const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf", {
   apiVersion: '2022-08-01',
 })
 app.post("/api/checkout", async (req: any, res: any) => {
-  const {id,stateCart,allQuantity,allToPay} = req.body
-  
+  const { id, stateCart, allQuantity, allToPay } = req.body
+
   const payments = await stripe.paymentIntents.create({
     amount: allToPay,
     currency: "USD",
@@ -53,7 +55,7 @@ app.post("/api/checkout", async (req: any, res: any) => {
     confirm: true,
   })
   console.log(payments)
-    res.send({message:'Successfull payment'})
+  res.send({ message: 'Successfull payment' })
 });
 
 //por ultimo el puerto por donde escucha

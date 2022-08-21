@@ -5,31 +5,34 @@ import { Op } from "sequelize";
 import { sendMail } from "../helpers/sendMail";
 
 const stripe = new Stripe(
-  "sk_test_51HmkyODqLWR8FNtItIo2gMij8gWymyLsPrv85yHYkTCZ31Xkr4el0sSiIIaTibp6mH2WjpXrAmDLB7pxxeyq4GlS00nA2d52JI",
+  "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
   {
     apiVersion: "2022-08-01",
   }
 );
 
-const { Orders, ProductOrders, Products, Users } = sequelize.models;
+const { Orders, ProductOrders, Products, Users, Address } = sequelize.models;
 
 export const getOrders = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { state, dateFrom, dateTo } = req.query as {
+  const { state, dateFrom, dateTo, order, user } = req.query as {
     state: string;
     dateFrom: string;
     dateTo: string;
+    order: string;
+    user: string;
   };
-  const where: any = {};
+  const whereOrder: any = {};
+  const whereUser: any = {};
 
   if (dateFrom && dateTo) {
-    const from = new Date(dateFrom).getTime();
-    const to = new Date(dateTo).getTime();
+    const from = new Date(`${dateFrom} 00:00`).getTime();
+    const to = new Date(`${dateTo} 23:59`).getTime();
 
     if (!(isNaN(from) && isNaN(to)) && from <= to) {
-      where.date = {
+      whereOrder.date = {
         [Op.and]: {
           [Op.gte]: from,
           [Op.lte]: to,
@@ -38,14 +41,23 @@ export const getOrders = async (
     }
   }
 
-  if (state) {
-    where.state = state;
+  if (user) {
+    whereUser.id = user;
   }
 
-  console.log(where);
+  if (user) {
+    whereUser.id = user;
+  }
+
+  if (state) {
+    whereOrder.state = state;
+  }
+
+  console.log(whereOrder);
 
   try {
-    const orders = await Orders.findAll({
+    let orders = await Orders.findAll({
+      where: whereOrder,
       attributes: {
         exclude: ["createdAt", "updatedAt", "UserId"],
       },
@@ -67,9 +79,14 @@ export const getOrders = async (
           attributes: {
             exclude: ["password"],
           },
+          where: whereUser,
         },
       ],
     });
+
+    if (order) {
+      orders = orders.filter((o) => o.toJSON().id.includes(order));
+    }
 
     return res.status(200).json(orders);
   } catch (error) {
@@ -83,6 +100,9 @@ export const getOrderById = async (
   res: Response
 ): Promise<Response> => {
   const { idOrder } = req.params;
+  console.log("hola");
+  console.log(idOrder);
+
   try {
     const order = await Orders.findByPk(idOrder, {
       attributes: {
@@ -108,9 +128,55 @@ export const getOrderById = async (
         },
       ],
     });
-
+    console.log("por acá");
     if (!order) return res.status(404).json({ msg: "Order not found" });
     return res.status(200).json(order);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("internal server error");
+  }
+};
+
+export const getOrdersStates = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    // const states = await Orders.findAll({
+    //   attributes: ["state"],
+    //   group: 'state'
+    // });
+    // return res.status(200).json(states.map(s => s.toJSON().state));
+
+    const states = ["pending", "process", "success"];
+
+    return res.status(200).json(states);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("internal server error");
+  }
+};
+
+export const setOrderState = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id, state } = req.body;
+
+  try {
+    const [, order]: any = await Orders.update(
+      {
+        state,
+      },
+      {
+        where: {
+          id,
+        },
+        returning: true,
+      }
+    );
+
+    return res.status(200).json(order[0]);
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
@@ -133,7 +199,7 @@ export const checkout = async (
       // }
     });
 
-    const payments = await stripe.paymentIntents.create({
+    const payments: any = await stripe.paymentIntents.create({
       amount: amount,
       currency: "USD",
       description: detail,
@@ -142,14 +208,28 @@ export const checkout = async (
       customer: newCustomer.id,
       receipt_email: customer.email,
     });
-
+    console.log(payments.charges.data[0].payment_method_details.card.brand);
     // Se crea la orden asociandole el user que hizo la compra y la direccion
     let date: any = new Date();
     date = date.toISOString().split("T")[0];
+
+    const address = await Address.findByPk(customer.AddressId);
+
+    const addressText = `Province : ${address?.toJSON().province} ,City : ${
+      address?.toJSON().city
+    } , Locality : ${address?.toJSON().locality} ,Numbe:  ${
+      address?.toJSON().street_number
+    }  , Apartament : ${address?.toJSON().apartment_floor} `.replace("/n", "");
+
+    //console.log(addressText);
+
     const order = await Orders.create({
       state: "success",
       UserId: customer.id,
-      // AddressId: '4f0c2b41-2952-46d7-87d0-0872c1b03a7c',
+      customer: customer.name + " " + customer.last_name,
+      address_order: addressText,
+      payment_method:
+        payments.charges.data[0].payment_method_details.card.brand,
       date,
       time: date,
     });
@@ -160,6 +240,7 @@ export const checkout = async (
         OrderId: order.toJSON().id,
         ProductId: product.id,
         quantity: product.quantity,
+        price: product.price,
       });
     }
 
@@ -171,7 +252,7 @@ export const checkout = async (
         '">Click in this link for view order</a></div>'
     );
 
-    console.log(payments.charges.data);
+    //  console.log(payments.charges.data);
     return res.status(200).json({ message: "Successfull payment" });
   } catch (error) {
     console.log(error);
