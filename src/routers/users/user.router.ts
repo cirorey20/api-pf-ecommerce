@@ -15,6 +15,7 @@ import {
   banend,
   desbaned,
   authenticateAccount,
+  updateAddress,
 } from "../../controller/user.controller";
 //usamos midlewares para comparar el rol y si esta logueado
 router.get("/", checkAuth, checkRoleAuth, getUsers);
@@ -23,7 +24,7 @@ router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
 router.put("/updateUser/:id", updateUser);
-router.put("/updateUser/:id/:idAddress", checkAuth, updateUser);
+router.put("/updateAddress/:idAddress", updateAddress);
 router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
 router.post("/desbaned/:id", desbaned);
