@@ -288,7 +288,7 @@ export const checkout = async (
     stateCart.map((e: any)=>discountStockBuy (e.id, e.quantity))
     var estado = true
   
-    return res.status(200).json({ message: "Successfull payment" });
+    return res.status(200).json({ message: "Successfull payment",estado });
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
