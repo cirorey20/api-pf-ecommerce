@@ -2,25 +2,26 @@ import { Model, UUIDV4 } from "sequelize";
 
 interface OrdersAttributes {
   id: string;
-  /* user_id: string;
-  address_id: string; */
   state: string;
   date: Date;
   time: string;
+  address_order: string;
+  payment_method: string;
+  customer: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
   class Orders extends Model<OrdersAttributes> implements OrdersAttributes {
     id!: string;
-    /*     user_id!: string;
-    address_id!: string; */
     state!: string;
     date!: Date;
     time!: string;
+    address_order!: string;
+    payment_method!: string;
+    customer!: string;
 
     static associate(models: any) {
       //una order puede tener muchos productos
-      Orders.belongsTo(models.Address);
       Orders.belongsTo(models.Users);
       Orders.hasMany(models.ProductOrders);
     }
@@ -33,15 +34,20 @@ export default (sequelize: any, DataTypes: any) => {
         defaultValue: UUIDV4,
         allowNull: false,
         primaryKey: true,
-      } /* ,
-      user_id: {
+      },
+      address_order: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      payment_method: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      customer: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      address_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      } */,
+
       state: {
         type: DataTypes.STRING,
         allowNull: false,

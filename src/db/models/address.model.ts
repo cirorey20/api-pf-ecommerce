@@ -7,7 +7,6 @@ interface AddressAttributes {
   locality: string;
   street_number: string;
   apartment_floor: string;
-  zip_code: string;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -18,9 +17,9 @@ export default (sequelize: any, DataTypes: any) => {
     locality!: string;
     street_number!: string;
     apartment_floor!: string;
-    zip_code!: string;
+
     static associate(models: any) {
-      Address.hasMany(models.Orders);
+      Address.hasMany(models.Users);
     }
   }
   Address.init(
@@ -33,27 +32,23 @@ export default (sequelize: any, DataTypes: any) => {
       },
       province: {
         type: DataTypes.STRING,
-        allowNull: false,
+        //    allowNull: false,
       },
       city: {
         type: DataTypes.STRING,
-        allowNull: false,
+        //    allowNull: false,
       },
       locality: {
         type: DataTypes.STRING,
-        allowNull: false,
+        //    allowNull: false,
       },
       street_number: {
         type: DataTypes.STRING,
-        allowNull: false,
+        //      allowNull: false,
       },
       apartment_floor: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      zip_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        //   allowNull: false,
       },
     },
     {

@@ -14,6 +14,7 @@ import {
   getUserLogin,
   banend,
   desbaned,
+  authenticateAccount,
 } from "../../controller/user.controller";
 //usamos midlewares para comparar el rol y si esta logueado
 router.get("/", checkAuth, checkRoleAuth, getUsers);
@@ -25,19 +26,29 @@ router.put("/updateUser/:id", checkAuth, updateUser);
 router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
 router.post("/desbaned/:id", desbaned);
+router.post("/authenticateAccount", authenticateAccount)
 
 router.post("/createAdmin", async (req, res) => {
   try {
+    const dbAdmin = await Users.findOne({
+      where: {
+        email: 'admin@admin.com'
+      }
+    });
+    if(dbAdmin) return res.status(200).send("Ya existe el admin");
+
     const admin = await Users.create({
       name: "Admin",
       last_name: "Admin",
       rol: "admin",
       email: "admin@admin.com",
       password: "admin",
+      authenticated:true,
     });
     return res.send("Admin creado");
   } catch (error) {
-    return res.status(400).send("Ya existe el admin");
+    console.log(error)
+    return res.status(500).send("Error en el servidor");
   }
 });
 
