@@ -63,7 +63,7 @@ export const getProducts = async (
   //nameProducts(req, res)
   try {
     //devuelvo un arreglo
-    const { categories, price, name, searchName } = req.query;
+    const { categories, price, name, searchName, minrange, maxrange } = req.query;
     console.log(categories);
 
     const allData = await Products.findAll({
@@ -106,6 +106,21 @@ export const getProducts = async (
           return categories.some((c) => dataCategories.includes(c));
         });
       }
+    }
+
+    //for range
+    if (minrange && maxrange) {
+      let min = newRows.filter((item) => item.price >= minrange)
+      let rst = min.filter((item) => item.price <= maxrange)
+      return res.send(rst)
+    }
+    if (minrange ) {
+      let min = newRows.filter((item) => item.price <= minrange)
+      return res.send(min)
+    }
+    if(maxrange) {
+      let max = newRows.filter((item) => item.price <= maxrange)
+      return res.send(max)
     }
 
     //for price
