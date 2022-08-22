@@ -1,8 +1,7 @@
 export const AUTHENTICATE_ACCOUNT = (
   name: string,
   last_name: string,
-  idUser: string,
-  code: string
+  url:string
 ) => `
 <div style='text-align:center;width:60%;margin-left:auto;margin-right:auto;color:#989898;max-width:766px;font-size:18px'>
     <img style="width:100px;margin-left:auto;margin-right:auto;display:block;border-radius:100%;margin-bottom:20px" src='https://raw.githubusercontent.com/cirorey20/client-pf-ecommerce/dev/src/assets/logoUM.jpg' alt='logo universal music' />
@@ -17,7 +16,7 @@ export const AUTHENTICATE_ACCOUNT = (
       </p>
       <a
           style="display:block;width:80%;background-color:#4285f5;margin-left:auto;margin-right:auto;border-radius:5px;padding-top:5px;padding-bottom:5px;text-decoration: none;color:white;font-weight:100"
-          href="http://localhost:3000/account/authenticate/${idUser}/${code}">Presiona para
+          href="${url}">Presiona para
           autenticar </a>
           <p style="font-size:13px">En caso de necesitar ayuda puedes comunicarte a <a href="mailto:universalmusic@gmail.com">universalmusic@gmail.com</a></p>
           <p style="font-size:13px">Enviado por <a href="www.universalmusic-web.app.co">www.universalmusic-web.app.com</a></p>
