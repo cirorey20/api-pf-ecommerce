@@ -117,8 +117,7 @@ export const createUser = async (
         AUTHENTICATE_ACCOUNT(
           allData.toJSON().name,
           allData.toJSON().last_name,
-          allData.toJSON().id,
-          allData.toJSON().hash_code
+          `${req.headers.origin}/account/authenticate/${allData.toJSON().id}/${allData.toJSON().hash_code}`
         )
       );
 
@@ -138,6 +137,7 @@ export const createUser = async (
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
+    
     const { email, password } = req.body; //llega info por formulario
     const user = await Users.findOne({
       where: { email },
@@ -207,8 +207,7 @@ export const loginGoogle = async (
         AUTHENTICATE_ACCOUNT(
           user.toJSON().name,
           user.toJSON().last_name,
-          user.toJSON().id,
-          user.toJSON().hash_code
+          `${req.headers.origin}/account/authenticate/${user.toJSON().id}/${user.toJSON().hash_code}`
         )
       );
     }
