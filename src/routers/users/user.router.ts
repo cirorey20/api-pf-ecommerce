@@ -2,7 +2,7 @@
 import express, { Router } from "express";
 import sequelize from "../../config/sequelize";
 const router: Router = express.Router();
-const { Users } = sequelize.models;
+const { Users, Address } = sequelize.models;
 import { checkRoleAuth, checkAuth } from "../../middlewares/autho";
 import {
   getUsers,
@@ -22,20 +22,21 @@ router.post("/createUsers", createUser);
 router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
-router.put("/updateUser/:id", checkAuth, updateUser);
+router.put("/updateUser/:id/:idAddress", checkAuth, updateUser);
 router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
 router.post("/desbaned/:id", desbaned);
-router.post("/authenticateAccount", authenticateAccount)
+router.post("/authenticateAccount", authenticateAccount);
 
 router.post("/createAdmin", async (req, res) => {
   try {
+    let address = await Address.create();
     const dbAdmin = await Users.findOne({
       where: {
-        email: 'admin@admin.com'
-      }
+        email: "admin@admin.com",
+      },
     });
-    if(dbAdmin) return res.status(200).send("Ya existe el admin");
+    if (dbAdmin) return res.status(200).send("Ya existe el admin");
 
     const admin = await Users.create({
       name: "Admin",
@@ -43,11 +44,12 @@ router.post("/createAdmin", async (req, res) => {
       rol: "admin",
       email: "admin@admin.com",
       password: "admin",
-      authenticated:true,
+      authenticated: true,
+      AddressId: address.toJSON().id,
     });
     return res.send("Admin creado");
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).send("Error en el servidor");
   }
 });
