@@ -22,20 +22,20 @@ router.post("/createUsers", createUser);
 router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
-router.put("/updateUser/:id", checkAuth, updateUser);
+router.put("/updateUser/:id", updateUser);
 router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
 router.post("/desbaned/:id", desbaned);
-router.post("/authenticateAccount", authenticateAccount)
+router.post("/authenticateAccount", authenticateAccount);
 
 router.post("/createAdmin", async (req, res) => {
   try {
     const dbAdmin = await Users.findOne({
       where: {
-        email: 'admin@admin.com'
-      }
+        email: "admin@admin.com",
+      },
     });
-    if(dbAdmin) return res.status(200).send("Ya existe el admin");
+    if (dbAdmin) return res.status(200).send("Ya existe el admin");
 
     const admin = await Users.create({
       name: "Admin",
@@ -43,11 +43,11 @@ router.post("/createAdmin", async (req, res) => {
       rol: "admin",
       email: "admin@admin.com",
       password: "admin",
-      authenticated:true,
+      authenticated: true,
     });
     return res.send("Admin creado");
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).send("Error en el servidor");
   }
 });
