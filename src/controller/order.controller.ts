@@ -3,6 +3,11 @@ import sequelize from "../config/sequelize";
 import Stripe from "stripe";
 import { Op } from "sequelize";
 import { sendMail } from "../helpers/sendMail";
+import {
+  CANCEL_ORDER,
+  FINISH_ORDER,
+  UPDATE_ORDER,
+} from "../helpers/contentMails";
 
 const stripe = new Stripe(
   "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
@@ -17,11 +22,12 @@ export const getOrders = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { state, dateFrom, dateTo, order, user } = req.query as {
+  const { state, dateFrom, dateTo, order, user, email } = req.query as {
     state: string;
     dateFrom: string;
     dateTo: string;
     order: string;
+    email: string;
     user: string;
   };
   const whereOrder: any = {};
@@ -39,10 +45,6 @@ export const getOrders = async (
         },
       };
     }
-  }
-
-  if (user) {
-    whereUser.id = user;
   }
 
   if (user) {
@@ -83,8 +85,10 @@ export const getOrders = async (
         },
       ],
     });
-
-    if (order) {
+    console.log(email);
+    if (email?.includes("@")) {
+      orders = orders.filter((o) => o.toJSON().User.email.includes(email));
+    } else if (order) {
       orders = orders.filter((o) => o.toJSON().id.includes(order));
     }
 
@@ -148,7 +152,7 @@ export const getOrdersStates = async (
     // });
     // return res.status(200).json(states.map(s => s.toJSON().state));
 
-    const states = ["pending", "process", "success"];
+    const states = ["cancel", "process", "success", "finish"];
 
     return res.status(200).json(states);
   } catch (error) {
@@ -161,8 +165,8 @@ export const setOrderState = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { id, state } = req.body;
-
+  const { id, state, email, name, last_name } = req.body;
+  console.log(req.body);
   try {
     const [, order]: any = await Orders.update(
       {
@@ -175,6 +179,22 @@ export const setOrderState = async (
         returning: true,
       }
     );
+
+    console.log(state);
+
+    if (state === "process") {
+      sendMail(
+        [email],
+        "Actualizacion de tu compra",
+        UPDATE_ORDER(name, last_name, id)
+      );
+    }
+    if (state === "cancel") {
+      sendMail([email], "Compra Cancelada", CANCEL_ORDER(name, last_name, id));
+    }
+    if (state === "finish") {
+      sendMail([email], "Compra finalizada", FINISH_ORDER(name, last_name, id));
+    }
 
     return res.status(200).json(order[0]);
   } catch (error) {

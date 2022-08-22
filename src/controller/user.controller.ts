@@ -117,8 +117,7 @@ export const createUser = async (
         AUTHENTICATE_ACCOUNT(
           allData.toJSON().name,
           allData.toJSON().last_name,
-          allData.toJSON().id,
-          allData.toJSON().hash_code
+          `${req.headers.origin}/account/authenticate/${allData.toJSON().id}/${allData.toJSON().hash_code}`
         )
       );
 
@@ -138,8 +137,13 @@ export const createUser = async (
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
+    
     const { email, password } = req.body; //llega info por formulario
-    const user = await Users.findOne({ where: { email } }); //buscamos si existe en la db por el email
+    const user = await Users.findOne({
+      where: { email },
+      include: [{ model: Address }],
+      //   attributes: { exclude: ["password", "hash_code"] },
+    }); //buscamos si existe en la db por el email
     if (!user) {
       return res.status(404).send("Usuario no existe"); //si no existe  mandamos mensaje de no existe
     }
@@ -179,8 +183,14 @@ export const loginGoogle = async (
     console.log(dataUser);
     if (!dataUser.email_verified)
       return res.status(404).send("Verificacion de email invalida");
-
-    let user = await Users.findOne({ where: { email: dataUser.email } }); //buscamos si existe en la db por el email
+    // {include : [ {model : Address} ]}
+    let user = await Users.findOne({
+      where: {
+        email: dataUser.email,
+      },
+      include: [{ model: Address }],
+      attributes: { exclude: ["password", "hash_code"] },
+    }); //buscamos si existe en la db por el email
     if (!user) {
       let address = await Address.create();
       user = await Users.create({
@@ -197,8 +207,7 @@ export const loginGoogle = async (
         AUTHENTICATE_ACCOUNT(
           user.toJSON().name,
           user.toJSON().last_name,
-          user.toJSON().id,
-          user.toJSON().hash_code
+          `${req.headers.origin}/account/authenticate/${user.toJSON().id}/${user.toJSON().hash_code}`
         )
       );
     }
@@ -235,8 +244,19 @@ export const updateUser = async (
 ): Promise<Response> => {
   try {
     const { id } = req.params;
+     const { idAddress } = req.params;
     // console.log(id);
-    const { name, last_name, avatar, email } = req.body;
+    const {
+      name,
+      last_name,
+      avatar,
+      email,
+      province,
+      city,
+      apartment_floor,
+      street_number,
+      locality,
+    } = req.body;
 
     await Users.update(
       {
@@ -247,6 +267,18 @@ export const updateUser = async (
       },
       {
         where: { id: id },
+      }
+    );
+    await Address.update(
+      {
+        province,
+        city,
+        apartment_floor,
+        street_number,
+        locality,
+      },
+      {
+        where: { id: idAddress },
       }
     );
     return res.json("se acutializo");
@@ -343,7 +375,10 @@ export const getUserLogin = async (
     const tokenSession = req.headers.authorization; //Accedemos a el token del user
     const data = jwt.verify(tokenSession, "autho"); //Verificamos que sea un token valido
     if (data?.id) {
-      const user = await Users.findByPk(data.id);
+      const user = await Users.findByPk(data.id, {
+        include: [{ model: Address }],
+        attributes: { exclude: ["password", "hash_code"] },
+      });
       if (user) {
         return res.status(200).json({ user, tokenSession });
       }
