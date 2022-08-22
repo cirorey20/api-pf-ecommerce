@@ -22,6 +22,7 @@ router.post("/createUsers", createUser);
 router.post("/login", login);
 router.post("/loginGoogle", loginGoogle);
 router.get("/getUserLogin", checkAuth, getUserLogin);
+router.put("/updateUser/:id", updateUser);
 router.put("/updateUser/:id/:idAddress", checkAuth, updateUser);
 router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
