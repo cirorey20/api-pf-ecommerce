@@ -10,7 +10,7 @@ import {
 } from "../helpers/contentMails";
 
 const stripe = new Stripe(
-  "sk_test_51LUcLbJTdGcYjfmabXXFoWRSiPxgUKrr7X2dIs5bxIXazcTD6IDMlGNn9DaV77UKzWNtN4iyoXAK6PBaiQoIGKGF00U6tqgLqT",
+  "sk_test_51LW3beKXLCV01PVdBvRu7M66aU55wyxCOsLzim1JwIBuqk9VpAVgUp3PaTLsm39p24PJc5NnEhKWyVCjOuJLnsGi00aicU9mgT",
   {
     apiVersion: "2022-08-01",
   }
@@ -245,11 +245,11 @@ export const checkout = async (
 
     const address = await Address.findByPk(customer.AddressId);
 
-    const addressText = `Province : ${address?.toJSON().province} ,City : ${
+    const addressText = `Province: ${address?.toJSON().province} ,City: ${
       address?.toJSON().city
-    } , Locality : ${address?.toJSON().locality} ,Numbe:  ${
+    } , Locality: ${address?.toJSON().locality} ,Street number:  ${
       address?.toJSON().street_number
-    }  , Apartament : ${address?.toJSON().apartment_floor} `.replace("/n", "");
+    }  , Apartment floor: ${address?.toJSON().apartment_floor} `.replace("/n", "");
 
     //console.log(addressText);
 
