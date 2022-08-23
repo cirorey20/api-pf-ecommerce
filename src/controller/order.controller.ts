@@ -208,7 +208,7 @@ export const checkout = async (
   res: Response
 ): Promise<Response> => {
   const { id, amount, stateCart, detail, customer } = req.body;
-
+  
   try {
     const newCustomer = await stripe.customers.create({
       name: `${customer.name} ${customer.last_name}`,
@@ -218,6 +218,15 @@ export const checkout = async (
       //     country: 'CO'
       // }
     });
+    
+    //Vericación de stock en bodega
+    const control = await Promise.all(
+      stateCart.map(async (e:any) => {
+        return await controlStockBuy(e.id,e.quantity)
+      }))
+
+    //Si todos los productos tienen stock se genera compra
+    if(!control.includes(true)){
 
     const payments: any = await stripe.paymentIntents.create({
       amount: amount,
@@ -228,6 +237,7 @@ export const checkout = async (
       customer: newCustomer.id,
       receipt_email: customer.email,
     });
+
     console.log(payments.charges.data[0].payment_method_details.card.brand);
     // Se crea la orden asociandole el user que hizo la compra y la direccion
     let date: any = new Date();
@@ -235,11 +245,11 @@ export const checkout = async (
 
     const address = await Address.findByPk(customer.AddressId);
 
-    const addressText = `Province : ${address?.toJSON().province} ,City : ${
+    const addressText = `Province: ${address?.toJSON().province} ,City: ${
       address?.toJSON().city
-    } , Locality : ${address?.toJSON().locality} ,Numbe:  ${
+    } , Locality: ${address?.toJSON().locality} ,Street number:  ${
       address?.toJSON().street_number
-    }  , Apartament : ${address?.toJSON().apartment_floor} `.replace("/n", "");
+    }  , Apartment floor: ${address?.toJSON().apartment_floor} `.replace("/n", "");
 
     //console.log(addressText);
 
@@ -272,8 +282,13 @@ export const checkout = async (
         '">Click in this link for view order</a></div>'
     );
 
-    //  console.log(payments.charges.data);
-    return res.status(200).json({ message: "Successfull payment" });
+    console.log(payments.charges.data);
+  }else return res.status(200).json({ message: "Don't Stock" }); 
+  
+    stateCart.map((e: any)=>discountStockBuy (e.id, e.quantity))
+    var estado = true
+  
+    return res.status(200).json({ message: "Successfull payment",estado });
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
@@ -333,3 +348,40 @@ export const getOrdersByUser = async (
     return res.send(err);
   }
 };
+
+
+
+async function  controlStockBuy (idProduct: any, solicitado: any)  {
+  try{
+    var producto = await Products.findByPk(idProduct)
+    var stockActual = producto?.toJSON().stock
+    if (stockActual>=solicitado){
+      return false
+    }else{ 
+      return true  
+    }
+  }catch(error){
+    console.log(error)
+}
+}
+
+
+async function discountStockBuy (idProduct: any, toDiscount: any) {
+try{
+  var producto = await Products.findByPk(idProduct)
+  var stockDescontado = (producto?.toJSON().stock) - toDiscount
+await Products.update(
+  {
+      stock: stockDescontado
+  },
+  {
+    where: { id: idProduct },
+  }
+);
+console.log("stock discount update")
+
+} catch (error) {
+console.log(error);
+}
+}
+

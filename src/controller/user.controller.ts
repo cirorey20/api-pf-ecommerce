@@ -137,7 +137,7 @@ export const createUser = async (
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
-    
+
     const { email, password } = req.body; //llega info por formulario
     const user = await Users.findOne({
       where: { email },
@@ -244,13 +244,43 @@ export const updateUser = async (
 ): Promise<Response> => {
   try {
     const { id } = req.params;
-     const { idAddress } = req.params;
-    // console.log(id);
+
     const {
       name,
       last_name,
       avatar,
-      email,
+    } = req.body;
+
+
+    await Users.update(
+      {
+        name,
+        last_name,
+        avatar,
+      },
+      {
+        where: { id: id },
+      }
+    );
+
+
+    return res.json("se acutializo");
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(404)
+      .json({ Error: "Intersal Server Errorr -->> updateUser" });
+  }
+};
+
+export const updateAddress = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { idAddress } = req.params;
+
+    const {
       province,
       city,
       apartment_floor,
@@ -258,17 +288,7 @@ export const updateUser = async (
       locality,
     } = req.body;
 
-    await Users.update(
-      {
-        name,
-        last_name,
-        avatar,
-        email,
-      },
-      {
-        where: { id: id },
-      }
-    );
+
     await Address.update(
       {
         province,
