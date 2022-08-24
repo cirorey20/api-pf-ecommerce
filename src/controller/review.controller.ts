@@ -24,11 +24,11 @@ export const addReview = async (
 ): Promise<Response> => {
   try {
     //const { name_id, ProductId, title, description, rating  } = req.body;
-    const {description, rating  } = req.body;
-    //console.log( req.body)
+    const {description, rating, UserId } = req.body;
     let date: any = new Date();
     date = date.toISOString().split("T")[0];
-    const createReview = await Review.create({ date, description, rating });
+    const createReview = await Review.create({ date, description, rating, user_id:UserId});
+    //console.log(createReview)
 
     // const findReview = await Review.findOne({ where: { name } });
     // if (findReview) {
@@ -38,7 +38,7 @@ export const addReview = async (
     //const createReview = await Review.create({ name_id, ProductId, date, description, rating }); 
     return res
       .status(202)
-      .json({ Message: "Create review succefully", createReview });
+      .json([{ Message: "Create review succefully", createReview }]);
   } catch (error) {
     console.log(error);
     return res.status(500).json("internal server error");
