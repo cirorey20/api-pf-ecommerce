@@ -94,7 +94,7 @@ export default (sequelize: any, DataTypes: any) => {
         defaultValue: (() => {
           const code = Math.random().toString(36).substring(2, 10);
           const hash = bcrypt.hashSync(code, 10);
-          return hash.replace("/", "");
+          return code.replace("/", "");
         })(),
       },
     },

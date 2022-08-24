@@ -441,3 +441,30 @@ export const authenticateAccount = async (
     return res.status(500).send("Error en el servidor");
   }
 };
+
+
+export const resendAuthenticateAccount = async (req:Request, res:Response): Promise<Response> => {
+  const { email } = req.body;
+  try {
+    const user = await Users.findOne({
+      where: {
+        email
+      }
+    });
+    if(!user) return res.status(404).json({msg:'Email not found', status:404});
+    if(user.toJSON().authenticated) return res.status(400).json({msg:'User authenticated', status:400});
+    sendMail(
+      [user?.toJSON().email],
+      'Re-send code authenticate your account',
+      AUTHENTICATE_ACCOUNT(
+        user.toJSON().name,
+        user.toJSON().last_name,
+        `${req.headers.origin}/account/authenticate/${user.toJSON().id}/${user.toJSON().hash_code}`
+      )
+    );
+    return res.status(200).json({msg:'Send email', status:200})
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Error en el servidor");
+  }
+};

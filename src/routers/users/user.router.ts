@@ -16,6 +16,7 @@ import {
   desbaned,
   authenticateAccount,
   updateAddress,
+  resendAuthenticateAccount,
 } from "../../controller/user.controller";
 //usamos midlewares para comparar el rol y si esta logueado
 router.get("/", checkAuth, checkRoleAuth, getUsers);
@@ -29,6 +30,7 @@ router.post("/promote/:id", promote);
 router.post("/banend/:id", banend);
 router.post("/desbaned/:id", desbaned);
 router.post("/authenticateAccount", authenticateAccount);
+router.post("/resendAuthenticateAccount",resendAuthenticateAccount);
 
 router.post("/createAdmin", async (req, res) => {
   try {
