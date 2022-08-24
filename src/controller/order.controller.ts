@@ -104,8 +104,8 @@ export const getOrderById = async (
   res: Response
 ): Promise<Response> => {
   const { idOrder } = req.params;
-  console.log("hola");
-  console.log(idOrder);
+  //console.log("hola");
+  //console.log(idOrder);
 
   try {
     const order = await Orders.findByPk(idOrder, {
@@ -132,7 +132,7 @@ export const getOrderById = async (
         },
       ],
     });
-    console.log("por acá");
+
     if (!order) return res.status(404).json({ msg: "Order not found" });
     return res.status(200).json(order);
   } catch (error) {
@@ -300,7 +300,7 @@ export const getOrdersByUser = async (
   res: Response
 ): Promise<Response> => {
   const { idUser } = req.params;
-  console.log(idUser);
+  //console.log(idUser);
   try {
     const orders = await Orders.findAll({
       where: { UserId: idUser },
