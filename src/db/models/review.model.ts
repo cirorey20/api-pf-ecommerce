@@ -6,8 +6,8 @@ interface ReviewAttributes {
   description: string;
   date: string;
   rating: number;
-  /*   user_id: number;
-  product_id: number; */
+  user_id: number;
+  product_id: number;
 }
 
 export default (sequelize: any, DataTypes: any) => {
@@ -17,8 +17,8 @@ export default (sequelize: any, DataTypes: any) => {
     description!: string;
     date!: string;
     rating!: number;
-    /*     user_id!: number;
-    product_id!: number; */
+    user_id!: number;
+    product_id!: number;
     static associate(models: any) {
       Review.belongsTo(models.Users);
       Review.belongsTo(models.Products);
@@ -37,7 +37,7 @@ export default (sequelize: any, DataTypes: any) => {
       },
       description: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       date: {
         type: DataTypes.STRING,
@@ -45,16 +45,16 @@ export default (sequelize: any, DataTypes: any) => {
       },
       rating: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
-      /*       user_id: {
+        user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       product_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-      }, */
+        allowNull: true,
+      },
     },
     {
       sequelize,
