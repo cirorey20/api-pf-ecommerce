@@ -34,7 +34,6 @@ export default (sequelize: any, DataTypes: any) => {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
       description: {
         type: DataTypes.STRING,
@@ -42,11 +41,11 @@ export default (sequelize: any, DataTypes: any) => {
       },
       date: {
         type: DataTypes.STRING,
-        allowNull: false,
         defaultValue: DataTypes.NOW,
       },
       rating: {
         type: DataTypes.INTEGER,
+        allowNull: false,
       },
       /*       user_id: {
         type: DataTypes.INTEGER,
