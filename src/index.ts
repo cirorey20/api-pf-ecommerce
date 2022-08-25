@@ -41,22 +41,27 @@ app.use(logError);
 app.use(errorHandler);
 
 //////////////////////////////
-const stripe = new Stripe("sk_test_51LUuaPGOqvRgizQ9MjapMBUmqYBnQzTuvRRkhH2vRh65om1regbCAn9dsvOIG61xxa9kbA8hnNk2NqozaQ91W1mA00ieJAWgCf", {
+/* const stripe = new Stripe("sk_test_51LVJYJHeLDBhzI8LRqnDcuTe8SAf6469CL5sSQg4HVIdbxl0gnaAaPsh6Oid7ayevw1pBoZ3CSvjagcggxFKjeV20016PkydCA", {
   apiVersion: '2022-08-01',
 })
 app.post("/api/checkout", async (req: any, res: any) => {
-  const { id, stateCart, allQuantity, allToPay } = req.body
-
-  const payments = await stripe.paymentIntents.create({
-    amount: allToPay,
-    currency: "USD",
-    description: "stateCart",
-    payment_method: id,
-    confirm: true,
-  })
-  console.log(payments)
-  res.send({ message: 'Successfull payment' })
-});
+  try{
+    const { id, stateCart, allQuantity, allToPay } = req.body
+    console.log(allToPay)
+      const payments = await stripe.paymentIntents.create({
+        amount: allToPay,
+        currency: "USD",
+        description: "stateCart",
+        payment_method: id,
+        confirm: true,
+      })
+      console.log(payments)
+  }catch(error){
+    console.log(error)
+  }
+  var estado = true
+  res.send({ message: 'Successfull payment', estado })
+}); */
 
 //por ultimo el puerto por donde escucha
 app.listen(port, (): void => {
