@@ -12,7 +12,7 @@ const dbUrl: string = `postgres://${config.dbUser}:${config.dbPassword}@${config
 
 const sequelize: Sequelize = new Sequelize(dbUrl, {
   dialect: "postgres",
-  logging: true,
+  logging: false,
 });
 
 setupModels(sequelize);

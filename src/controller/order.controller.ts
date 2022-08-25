@@ -11,7 +11,7 @@ import {
 } from "../helpers/contentMails";
 
 const stripe = new Stripe(
-  "sk_test_51LW3beKXLCV01PVdBvRu7M66aU55wyxCOsLzim1JwIBuqk9VpAVgUp3PaTLsm39p24PJc5NnEhKWyVCjOuJLnsGi00aicU9mgT",
+  "sk_test_51LVJYJHeLDBhzI8LRqnDcuTe8SAf6469CL5sSQg4HVIdbxl0gnaAaPsh6Oid7ayevw1pBoZ3CSvjagcggxFKjeV20016PkydCA",
   {
     apiVersion: "2022-08-01",
   }
@@ -102,8 +102,8 @@ export const getOrderById = async (
   res: Response
 ): Promise<Response> => {
   const { idOrder } = req.params;
-  console.log("hola");
-  console.log(idOrder);
+  //console.log("hola");
+  //console.log(idOrder);
 
   try {
     const order = await Orders.findByPk(idOrder, {
@@ -130,7 +130,7 @@ export const getOrderById = async (
         },
       ],
     });
-    console.log("por acá");
+
     if (!order) return res.status(404).json({ msg: "Order not found" });
     return res.status(200).json(order);
   } catch (error) {
@@ -297,7 +297,7 @@ export const getOrdersByUser = async (
   res: Response
 ): Promise<Response> => {
   const { idUser } = req.params;
-  console.log(idUser);
+  //console.log(idUser);
   try {
     const orders = await Orders.findAll({
       where: { UserId: idUser },
