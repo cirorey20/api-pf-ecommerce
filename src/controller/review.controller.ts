@@ -24,11 +24,11 @@ export const addReview = async (
 ): Promise<Response> => {
   try {
     //const { name_id, ProductId, title, description, rating  } = req.body;
-    const {description, rating, UserId, ProductId } = req.body;
+    const {description, rating, UserId, title, ProductId } = req.body;
     console.log(req.body)
     let date: any = new Date();
     date = date.toISOString().split("T")[0];
-    const createReview = await Review.create({ date, description, rating, UserId, ProductId});
+    const createReview = await Review.create({ date, title, description, rating, UserId, ProductId});
     //console.log(createReview)
 
     // const findReview = await Review.findOne({ where: { name } });
