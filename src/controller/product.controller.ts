@@ -60,6 +60,7 @@ export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+
   //nameProducts(req, res)
   try {
     //devuelvo un arreglo
