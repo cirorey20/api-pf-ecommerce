@@ -86,11 +86,8 @@ export const getOrders = async (
         },
       ],
     });
-    console.log(email);
-    if (email?.includes("@")) {
-      orders = orders.filter((o) => o.toJSON().User.email.includes(email));
-    } else if (order) {
-      orders = orders.filter((o) => o.toJSON().id.includes(order));
+    if(order) {
+      orders = orders.filter((o) => o.toJSON().id.includes(order) || o.toJSON().User.email.includes(order));
     }
 
     return res.status(200).json(orders);
