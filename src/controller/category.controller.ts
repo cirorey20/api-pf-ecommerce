@@ -58,3 +58,35 @@ export const createCategories = async (
     return res.status(500).json("internal server error");
   }
 };
+
+export const updateCategory = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const {
+    id,
+    name
+  } = req.body as {
+    id: number;
+    name: string;
+  };
+
+  try {
+    const fields: any = {};
+    if (name) fields.name = name;
+
+    await Categories.update(fields, {
+      where: {
+        id,
+      },
+      returning: true,
+    });
+
+    return res.status(200).json({ msg: `Update category id ${id}` });
+    // return res.status(200).send("OHA");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("internal server error");
+  }
+};
+
