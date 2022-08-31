@@ -10,7 +10,7 @@ import {
 } from "../helpers/contentMails";
 
 const stripe = new Stripe(
-  "sk_test_51LXH3JCJgSlYWB072Rd27lR6DIdfEAZMprizBN3nGHi3sj7LHMCJGMu0JvMQTMI9VZYY04h4lSvjOEOLaZ373ExT008LGiRmnH", //esta key es para produccion
+  "sk_test_51LXH3JCJgSlYWB07MliF1REU92UJtsB6y0MAwW9A7zwLO6bzTCS2YQyOldIH6mcGNFk0yA8qZHq5zZl1BPRu7eXP004FgCGTMh", //esta key es para produccion
   {
     apiVersion: "2022-08-01",
   }
